@@ -9,6 +9,12 @@ export type MapPalette = {
   label: string;
   /** Rampe de couleurs, faible → fort */
   ramp: string[];
+  /**
+   * Une rampe divergente passe par un point neutre au milieu : elle oppose
+   * deux extrêmes au lieu de graduer une intensité. À signaler, car mal
+   * employée elle fait lire un écart là où il n'y en a pas.
+   */
+  diverging?: boolean;
 };
 
 export const MAP_PALETTES: MapPalette[] = [
@@ -33,6 +39,11 @@ export const MAP_PALETTES: MapPalette[] = [
     ramp: ["#FFEDD5", "#FED7AA", "#FDBA74", "#FB923C", "#F97316", "#EA580C", "#C2410C"],
   },
   {
+    id: "ivoire",
+    label: "Orange · Blanc · Vert",
+    ramp: ["#C2410C", "#F97316", "#FDBA74", "#FFFFFF", "#86EFAC", "#22C55E", "#15803D"],
+  },
+  {
     id: "purple",
     label: "Violet",
     ramp: ["#EDE9FE", "#DDD6FE", "#C4B5FD", "#A78BFA", "#8B5CF6", "#7C3AED", "#6D28D9"],
@@ -44,7 +55,8 @@ export const MAP_PALETTES: MapPalette[] = [
   },
   {
     id: "diverging",
-    label: "Divergente (rouge→vert)",
+    label: "Rouge - Vert",
+    diverging: true,
     ramp: ["#B91C1C", "#EF4444", "#FCA5A5", "#F1F5F9", "#86EFAC", "#22C55E", "#15803D"],
   },
   {

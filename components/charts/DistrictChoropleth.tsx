@@ -109,8 +109,8 @@ export default function DistrictChoropleth() {
             <SelectContent>
               {MAP_PALETTES.map((p) => (
                 <SelectItem key={p.id} value={p.id} className="text-sm">
-                  <span className="flex items-center gap-2">
-                    <span className="flex h-3 w-12 overflow-hidden rounded-sm border border-border/50">
+                  <span className="flex items-center gap-2.5">
+                    <span className="flex h-4 w-16 shrink-0 overflow-hidden rounded-sm border border-border/50">
                       {p.ramp.map((c) => (
                         <span
                           key={c}
@@ -119,7 +119,7 @@ export default function DistrictChoropleth() {
                         />
                       ))}
                     </span>
-                    {p.label}
+                    <span>{p.label}</span>
                   </span>
                 </SelectItem>
               ))}
