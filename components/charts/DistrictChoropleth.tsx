@@ -185,7 +185,10 @@ function Legend({
                 className="h-3.5 w-6 rounded-sm border border-border/50"
                 style={{ backgroundColor: color }}
               />
-              <span className="text-[11px] tabular-nums text-muted-foreground">
+              <span
+                className="text-[11px] tabular-nums"
+                style={{ color: "var(--chart-text)" }}
+              >
                 {formatter(lo)} – {formatter(hi)}
               </span>
             </div>
@@ -193,7 +196,7 @@ function Legend({
         })}
         <div className="flex items-center gap-2 mt-1">
           <span className="h-3.5 w-6 rounded-sm border border-border/50 bg-slate-200" />
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-[11px]" style={{ color: "var(--chart-text)" }}>
             Indisponible
           </span>
         </div>

@@ -45,5 +45,6 @@ export const CHART_COLORS = {
 
   // ── Éléments d'axes/grilles (lisibles sur cartes slate-300) ──
   grid: "#64748B", // slate-500 (lignes de grille)
-  axis: "#064E3B", // emerald-900 (axes + labels, contraste sur slate-300)
+  /** Texte des graphiques : noir en thème clair, blanc en thème sombre. */
+  axis: "var(--chart-text)",
 } as const;

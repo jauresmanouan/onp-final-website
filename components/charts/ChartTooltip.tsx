@@ -21,8 +21,11 @@ export default function ChartTooltip({
   const displayLabel = labelFormatter && label != null ? labelFormatter(String(label)) : label;
 
   return (
-    <div className="rounded-md border border-border bg-card text-card-foreground shadow-md px-3 py-2 text-xs">
-      <p className="font-medium text-foreground mb-1">{displayLabel}</p>
+    <div
+      className="rounded-md border border-border bg-card shadow-md px-3 py-2 text-xs"
+      style={{ color: "var(--chart-text)" }}
+    >
+      <p className="font-medium mb-1">{displayLabel}</p>
       <div className="space-y-0.5">
         {payload.map((entry, i) => {
           const value = entry.value;
@@ -39,9 +42,9 @@ export default function ChartTooltip({
                   className="h-2 w-2 rounded-sm shrink-0"
                   style={{ backgroundColor: entry.color }}
                 />
-                <span className="text-muted-foreground">{entry.name}</span>
+                <span>{entry.name}</span>
               </div>
-              <span className="font-medium text-foreground tabular-nums">
+              <span className="font-medium tabular-nums">
                 {formatted}
                 {valueSuffix}
               </span>

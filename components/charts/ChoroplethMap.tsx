@@ -234,8 +234,10 @@ export default function ChoroplethMap({
           className="pointer-events-none fixed z-50 rounded-md border border-border bg-popover px-3 py-2 text-xs shadow-lg"
           style={{ left: hovered.x + 12, top: hovered.y + 12 }}
         >
-          <div className="font-semibold text-foreground">{hovered.name}</div>
-          <div className="text-muted-foreground">
+          <div className="font-semibold" style={{ color: "var(--chart-text)" }}>
+            {hovered.name}
+          </div>
+          <div style={{ color: "var(--chart-text)" }}>
             {hovered.value != null
               ? valueFormatter(hovered.value)
               : "Donnée indisponible"}

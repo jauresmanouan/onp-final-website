@@ -83,6 +83,9 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.55 0.22 270);
 
+  /* Texte des graphiques : axes, graduations, legendes, infobulles */
+  --chart-text: #000000;
+
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.18 0.01 250);
   --sidebar-primary: oklch(0.723 0.219 149.579);
@@ -130,6 +133,9 @@
   --chart-4: oklch(0.78 0.18 84);
   --chart-5: oklch(0.65 0.24 270);
 
+  /* Le pendant lisible du noir sur fond sombre */
+  --chart-text: #FFFFFF;
+
   --sidebar: oklch(0.21 0.013 250);
   --sidebar-foreground: oklch(0.96 0.005 250);
   --sidebar-primary: oklch(0.74 0.2 149);
@@ -175,4 +181,22 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ── Texte des graphiques (Recharts) ─────────────────────────────
+ * Noir en clair, blanc en sombre, pour tous les graphiques a la fois.
+ * Une regle CSS l'emporte sur les attributs de presentation SVG
+ * (fill="…"), ce qui evite d'avoir a reprendre chaque graphique.
+ */
+.recharts-text,
+.recharts-cartesian-axis-tick-value,
+.recharts-cartesian-axis-tick-value tspan,
+.recharts-label,
+.recharts-label-list text {
+  fill: var(--chart-text);
+  fill-opacity: 1;
+}
+
+.recharts-legend-item-text {
+  color: var(--chart-text) !important;
 }

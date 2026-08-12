@@ -120,8 +120,7 @@ export default function MiniTrendChart({
         y={y}
         dy={12}
         textAnchor={anchor}
-        fill="currentColor"
-        fillOpacity={0.6}
+        fill="var(--chart-text)"
         fontSize={11}
       >
         {label}
@@ -184,7 +183,7 @@ export default function MiniTrendChart({
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fill: "currentColor", opacity: 0.6 }}
+                tick={{ fill: "var(--chart-text)" }}
                 width={28}
               />
               {highlightX && (
