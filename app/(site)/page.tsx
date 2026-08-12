@@ -19,95 +19,99 @@ export default async function AccueilPage() {
     getInstitution(),
   ]);
   const { identite, presentation, missions } = institution;
+  const { principal } = chiffres;
+
+  // Le nombre de missions complète les mesures tirées des CSV : il dit ce que
+  // l'Office fait, là où les autres chiffres disent ce qu'il observe.
+  const secondaires = [
+    ...chiffres.secondaires,
+    {
+      valeur: String(missions.length),
+      intitule: "Missions",
+      precision: "Confiées par le décret de création",
+    },
+  ];
 
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────────────────
-       * Construit sur la typographie, les emblèmes et les chiffres plutôt
-       * que sur une photographie : un observatoire se présente par ce qu'il
-       * mesure, et le fonds photographique disponible ne soutient pas un
-       * plein écran.
+      {/* ── Ouverture ────────────────────────────────────────────
+       * Le site s'ouvre sur ce qu'il mesure. Le chiffre du recensement tient
+       * la page, les autres se rangent dessous, et les armoiries restent en
+       * filigrane : elles situent l'institution sans disputer la lecture.
        */}
-      <section className="relative overflow-hidden bg-panel text-panel-foreground">
-        <div
+      <section className="relative overflow-hidden bg-panel text-panel-foreground px-60">
+        <Image
+          src="/emblemes/armoiries-ci.svg"
+          alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute -right-24 -top-24 size-[28rem] rounded-full bg-white/5 blur-3xl"
+          width={900}
+          height={820}
+          priority
+          className="pointer-events-none absolute -right-16 top-1/2 hidden h-[130%] w-auto -translate-y-1/2 opacity-[0.07] md:block"
         />
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-10 py-20 lg:py-28">
-          <div className="grid gap-14 lg:grid-cols-[1.35fr_1fr] lg:items-center">
-            <div>
-              <p className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-medium">
-                <Image
-                  src="/emblemes/drapeau-ci.svg"
-                  alt=""
-                  width={18}
-                  height={12}
-                  className="h-3 w-auto rounded-[2px]"
-                />
-                République de Côte d&apos;Ivoire
+
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-10 pt-16 pb-14 lg:pt-20 lg:pb-16">
+          {/* <p className="flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-panel-foreground/70">
+            <Image
+              src="/emblemes/drapeau-ci.svg"
+              alt=""
+              width={21}
+              height={14}
+              className="h-3.5 w-auto rounded-[2px]"
+            />
+            République de Côte d&apos;Ivoire
+          </p> */}
+
+          <h1 className="mt-4 font-display text-2xl sm:text-3xl font-bold tracking-tight">
+            {identite.baseline}
+          </h1>
+
+          {principal && (
+            <div className="mt-12 lg:mt-16">
+              <p className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+                <span className="font-display text-[clamp(4.5rem,15vw,11rem)] font-bold leading-[0.85] tracking-tighter tabular-nums">
+                  {principal.valeur}
+                </span>
+                <span className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-[0.12em] text-accent">
+                  {principal.unite}
+                </span>
               </p>
-
-              <h1 className="mt-6 font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05]">
-                {identite.baseline}
-              </h1>
-
-              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-panel-foreground/85">
-                {presentation.chapeau}
+              <p className="mt-4 text-lg text-panel-foreground/80">
+                {principal.precision}
               </p>
-
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-6 py-3.5 text-sm font-semibold text-accent-foreground transition-transform hover:scale-[1.02]"
-                >
-                  Consulter la banque de données
-                  <ArrowUpRight className="size-4" />
-                </Link>
-                <Link
-                  href="/office"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/25 px-6 py-3.5 text-sm font-semibold transition-colors hover:bg-white/10"
-                >
-                  Découvrir l&apos;Office
-                  <ArrowRight className="size-4" />
-                </Link>
-              </div>
             </div>
+          )}
 
-            <div className="lg:justify-self-end">
-              <Image
-                src="/emblemes/armoiries-ci.svg"
-                alt="Armoiries de la République de Côte d'Ivoire"
-                width={320}
-                height={320}
-                className="mx-auto h-52 w-auto opacity-95 lg:h-72"
-                priority
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Chiffres clés ─────────────────────────────────────── */}
-      <section
-        aria-labelledby="chiffres-titre"
-        className="border-b border-border bg-background"
-      >
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-14">
-          <h2 id="chiffres-titre" className="sr-only">
-            La population ivoirienne en chiffres
-          </h2>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {chiffres.map((c) => (
-              <div key={c.intitule} className="border-l-2 border-primary pl-5">
-                <p className="font-display text-3xl lg:text-4xl font-bold tracking-tight tabular-nums">
+          {/* Les autres mesures, séparées par des filets */}
+          <dl className="mt-14 grid grid-cols-2 gap-y-8 border-t border-white/15 pt-8 lg:grid-cols-4 lg:divide-x lg:divide-white/15">
+            {secondaires.map((c, i) => (
+              <div key={c.intitule} className={i > 0 ? "lg:pl-8" : "lg:pr-8"}>
+                <dd className="font-display text-3xl lg:text-4xl font-bold tracking-tight tabular-nums">
                   {c.valeur}
-                </p>
-                <p className="mt-1.5 font-medium">{c.intitule}</p>
-                <p className="mt-0.5 text-sm text-muted-foreground leading-snug">
+                </dd>
+                <dt className="mt-1.5 text-sm font-medium">{c.intitule}</dt>
+                <p className="mt-0.5 text-xs text-panel-foreground/65 leading-snug">
                   {c.precision}
                 </p>
               </div>
             ))}
+          </dl>
+
+          <div className="mt-12 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-6 py-3.5 text-sm font-semibold text-accent-foreground transition-transform hover:scale-[1.02]"
+            >
+              Consulter la banque de données
+              <ArrowUpRight className="size-4" />
+            </Link>
+            {/* <Link
+              href="/office"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/25 px-6 py-3.5 text-sm font-semibold transition-colors hover:bg-white/10"
+            >
+              Découvrir l&apos;Office
+              <ArrowRight className="size-4" />
+            </Link> */}
           </div>
         </div>
       </section>

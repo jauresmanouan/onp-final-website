@@ -16,6 +16,16 @@ export type ChiffreCle = {
   precision: string;
 };
 
+/**
+ * Le chiffre d'ouverture, traité en très grand : la valeur et son unité sont
+ * séparées pour pouvoir les composer à deux tailles différentes.
+ */
+export type ChiffrePrincipal = {
+  valeur: string;
+  unite: string;
+  precision: string;
+};
+
 const DATA_DIR = path.join(process.cwd(), "public", "data", "onp");
 
 async function readCsv(file: string): Promise<Record<string, string>[]> {
@@ -35,12 +45,10 @@ const num = (v: string | undefined): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
-/** 29 389 150 devient « 29,4 millions ». */
-function millions(n: number): string {
-  return `${(n / 1_000_000).toFixed(1).replace(".", ",")} millions`;
-}
-
-export async function getChiffresCles(): Promise<ChiffreCle[]> {
+export async function getChiffresCles(): Promise<{
+  principal: ChiffrePrincipal | null;
+  secondaires: ChiffreCle[];
+}> {
   const [population, esperance, districts] = await Promise.all([
     readCsv("population_totale_et_croissance.csv"),
     readCsv("sante_esperance_vie_naissance.csv"),
@@ -51,13 +59,14 @@ export async function getChiffresCles(): Promise<ChiffreCle[]> {
 
   const totale = population.find((r) => r.indicateur === "Population totale");
   const habitants = num(totale?.["RGPH_2021"]);
-  if (habitants != null) {
-    chiffres.push({
-      valeur: millions(habitants),
-      intitule: "Habitants",
-      precision: "Recensement général de 2021",
-    });
-  }
+  const principal: ChiffrePrincipal | null =
+    habitants != null
+      ? {
+          valeur: (habitants / 1_000_000).toFixed(1).replace(".", ","),
+          unite: "millions",
+          precision: "d'habitants recensés en 2021",
+        }
+      : null;
 
   // Les deux sexes sont publiés séparément : l'ensemble est leur moyenne
   const hommes = num(esperance.find((r) => r.sexe === "Hommes")?.["2021"]);
@@ -86,11 +95,11 @@ export async function getChiffresCles(): Promise<ChiffreCle[]> {
       const facteur = habitants / precedent;
       chiffres.push({
         valeur: `×${facteur.toFixed(1).replace(".", ",")}`,
-        intitule: "Croissance depuis 1998",
+        intitule: "Depuis 1998",
         precision: "Population multipliée en vingt-trois ans",
       });
     }
   }
 
-  return chiffres;
+  return { principal, secondaires: chiffres };
 }
