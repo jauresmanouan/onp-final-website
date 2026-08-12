@@ -60,40 +60,6 @@ export default function HomePage() {
             <DashboardCTA />
           </div>
         </div>
-
-        {/* Feature cards */}
-        <div className="max-w-4xl mx-auto mt-20 grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
-          {[
-            {
-              icon: "🗺️",
-              title: "Cartographie interactive",
-              desc: "Visualisez les indicateurs par district sur une carte choroplèthe de la Côte d'Ivoire.",
-            },
-            {
-              icon: "📊",
-              title: "Indicateurs thématiques",
-              desc: "Population, santé, dividende démographique — organisés par thématique et niveau géographique.",
-            },
-            {
-              icon: "📥",
-              title: "Données téléchargeables",
-              desc: "Exportez les données au format CSV pour vos propres analyses et publications.",
-            },
-          ].map((f) => (
-            <div
-              key={f.title}
-              className="p-5 rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 space-y-2"
-            >
-              <div className="text-2xl">{f.icon}</div>
-              <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100">
-                {f.title}
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                {f.desc}
-              </p>
-            </div>
-          ))}
-        </div>
       </main>
 
       {/* Footer */}
