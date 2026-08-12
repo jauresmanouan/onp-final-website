@@ -26,10 +26,10 @@ export default function HomePage() {
             <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">
               Office National de la Population
             </span>
-            <span className="text-[10px] text-gray-500 dark:text-gray-400 hidden sm:inline">
+            {/* <span className="text-[10px] text-gray-500 dark:text-gray-400 hidden sm:inline">
               Observatoire Gouvernemental des Données de Population et du
               Dividende Démographique
-            </span>
+            </span> */}
           </div>
         </div>
       </header>
@@ -37,10 +37,10 @@ export default function HomePage() {
       {/* Hero */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-20 text-center">
         <div className="max-w-2xl mx-auto space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
+          {/* <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             Données officielles · Côte d&apos;Ivoire
-          </div>
+          </div> */}
 
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
             Banque de données
