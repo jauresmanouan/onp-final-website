@@ -33,7 +33,15 @@ import {
   CONTACT,
 } from "@/content/site/institution";
 
-export type { Actualite, Partenaire };
+import {
+  PUBLICATIONS,
+  CATEGORIES,
+  ORDRE_CATEGORIES,
+  type Publication,
+  type CategoriePublication,
+} from "@/content/site/publications";
+
+export type { Actualite, Partenaire, Publication, CategoriePublication };
 
 export async function getActualites(limite?: number): Promise<Actualite[]> {
   return limite ? ACTUALITES_RECENTES.slice(0, limite) : ACTUALITES_RECENTES;
@@ -45,6 +53,22 @@ export async function getActualite(slug: string): Promise<Actualite | null> {
 
 export async function getActualiteSlugs(): Promise<string[]> {
   return ACTUALITES.map((a) => a.slug);
+}
+
+/** Publications groupées par catégorie, dans l'ordre d'affichage. */
+export async function getPublicationsParCategorie(): Promise<
+  { categorie: CategoriePublication; label: string; description: string; publications: Publication[] }[]
+> {
+  return ORDRE_CATEGORIES.map((categorie) => ({
+    categorie,
+    label: CATEGORIES[categorie].label,
+    description: CATEGORIES[categorie].description,
+    publications: PUBLICATIONS.filter((p) => p.categorie === categorie),
+  })).filter((groupe) => groupe.publications.length > 0);
+}
+
+export async function getPublications(): Promise<Publication[]> {
+  return PUBLICATIONS;
 }
 
 export async function getPartenaires(): Promise<Partenaire[]> {
