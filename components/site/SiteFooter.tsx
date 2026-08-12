@@ -8,6 +8,7 @@ const RUBRIQUES = [
   { href: "/publications", label: "Publications" },
   { href: "/partenaires", label: "Partenaires" },
   { href: "/contact", label: "Contact" },
+  { href: "/faq", label: "Foire aux questions" },
   { href: "/dashboard", label: "Banque de données" },
 ];
 

@@ -41,7 +41,23 @@ import {
   type CategoriePublication,
 } from "@/content/site/publications";
 
-export type { Actualite, Partenaire, Publication, CategoriePublication };
+import { COORDONNEES, FAQ, type Question } from "@/content/site/contact";
+
+export type {
+  Actualite,
+  Partenaire,
+  Publication,
+  CategoriePublication,
+  Question,
+};
+
+export async function getCoordonnees() {
+  return COORDONNEES;
+}
+
+export async function getFAQ(): Promise<Question[]> {
+  return FAQ;
+}
 
 export async function getActualites(limite?: number): Promise<Actualite[]> {
   return limite ? ACTUALITES_RECENTES.slice(0, limite) : ACTUALITES_RECENTES;
