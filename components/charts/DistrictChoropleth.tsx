@@ -5,6 +5,7 @@ import { useCSV } from "./useCSV";
 import { parseNumber, formatFrench, formatCompactNumber } from "./transformCSV";
 import ChoroplethMap from "./ChoroplethMap";
 import DistrictStatsPanel from "./DistrictStatsPanel";
+import { quantileScale, type MapScale } from "./mapScale";
 import {
   MAP_PALETTES,
   DEFAULT_PALETTE_ID,
@@ -67,6 +68,12 @@ export default function DistrictChoropleth() {
     return { valueByName: map, domain: [min, max] as [number, number] };
   }, [data, indicator]);
 
+  // Classes d'effectifs égaux : voir mapScale.ts pour le pourquoi.
+  const scale = useMemo(
+    () => quantileScale([...valueByName.values()], palette.ramp),
+    [valueByName, palette.ramp],
+  );
+
   const valueFormatter = (v: number) =>
     current.kind === "count" ? formatFrench(v) : v.toFixed(3);
 
@@ -78,7 +85,10 @@ export default function DistrictChoropleth() {
       {/* Contrôles : indicateur + palette de couleurs */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-medium text-muted-foreground">
+          <span
+            className="text-xs font-semibold"
+            style={{ color: "var(--chart-text)" }}
+          >
             Indicateur
           </span>
           <Select
@@ -99,7 +109,10 @@ export default function DistrictChoropleth() {
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs font-medium text-muted-foreground">
+          <span
+            className="text-xs font-semibold"
+            style={{ color: "var(--chart-text)" }}
+          >
             Couleurs
           </span>
           <Select value={paletteId} onValueChange={setPaletteId}>
@@ -140,7 +153,8 @@ export default function DistrictChoropleth() {
               normalizeName={normalizeName}
               valueByName={valueByName}
               domain={domain}
-              colorRamp={palette.ramp}
+              colorRamp={scale.ramp}
+              breaks={scale.breaks}
               valueFormatter={valueFormatter}
               labelFormatter={legendFormatter}
               onSelect={setSelected}
@@ -152,9 +166,8 @@ export default function DistrictChoropleth() {
         {/* Légende */}
         {!isLoading && (
           <Legend
-            domain={domain}
+            scale={scale}
             label={current.label}
-            ramp={palette.ramp}
             formatter={legendFormatter}
           />
         )}
@@ -169,43 +182,64 @@ export default function DistrictChoropleth() {
   );
 }
 
+/**
+ * La légende porte la mesure : les classes ayant des amplitudes inégales
+ * (voir mapScale.ts), ce sont ses bornes qui disent ce que vaut une teinte.
+ * L'effectif de chaque classe est affiché en regard, ce qui rend visible la
+ * concentration des districts au lieu de la laisser deviner sur la carte.
+ */
 function Legend({
-  domain,
+  scale,
   label,
-  ramp,
   formatter,
 }: {
-  domain: [number, number];
+  scale: MapScale;
   label: string;
-  ramp: string[];
   formatter: (v: number) => string;
 }) {
-  const [min, max] = domain;
+  const rows = scale.ramp
+    .map((color, i) => ({
+      color,
+      count: scale.counts[i],
+      bounds: scale.bounds[i],
+    }))
+    .reverse();
+
   return (
-    <div className="rounded-xl border border-border bg-card/50 p-4 lg:w-44">
-      <p className="text-xs font-semibold text-foreground mb-3">{label}</p>
+    <div className="rounded-xl border border-border bg-card/50 p-4 lg:w-52">
+      <p className="text-xs font-semibold mb-1" style={{ color: "var(--chart-text)" }}>
+        {label}
+      </p>
+      <p className="text-[11px] text-muted-foreground mb-3">
+        Classes de même effectif
+      </p>
+
       <div className="flex flex-col gap-1.5">
-        {[...ramp].reverse().map((color, i) => {
-          const n = ramp.length;
-          const hi = max - ((max - min) * i) / n;
-          const lo = max - ((max - min) * (i + 1)) / n;
-          return (
-            <div key={color} className="flex items-center gap-2">
-              <span
-                className="h-3.5 w-6 rounded-sm border border-border/50"
-                style={{ backgroundColor: color }}
-              />
-              <span
-                className="text-[11px] tabular-nums"
-                style={{ color: "var(--chart-text)" }}
-              >
-                {formatter(lo)} – {formatter(hi)}
-              </span>
-            </div>
-          );
-        })}
+        {/* Clé par index : une rampe ré-échantillonnée peut répéter une teinte */}
+        {rows.map((row, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <span
+              className="h-3.5 w-6 shrink-0 rounded-sm border border-border/50"
+              style={{ backgroundColor: row.color }}
+            />
+            <span
+              className="text-[11px] tabular-nums flex-1"
+              style={{ color: "var(--chart-text)" }}
+            >
+              {formatter(row.bounds[0])} – {formatter(row.bounds[1])}
+            </span>
+            <span
+              className="text-[11px] tabular-nums text-muted-foreground"
+              title={`${row.count} district${row.count > 1 ? "s" : ""}`}
+            >
+              {row.count}
+            </span>
+            {i === 0 && <span className="sr-only">valeurs les plus élevées</span>}
+          </div>
+        ))}
+
         <div className="flex items-center gap-2 mt-1">
-          <span className="h-3.5 w-6 rounded-sm border border-border/50 bg-[var(--map-no-data)]" />
+          <span className="h-3.5 w-6 shrink-0 rounded-sm border border-border/50 bg-(--map-no-data)" />
           <span className="text-[11px]" style={{ color: "var(--chart-text)" }}>
             Indisponible
           </span>

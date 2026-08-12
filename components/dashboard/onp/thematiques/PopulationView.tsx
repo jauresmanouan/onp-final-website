@@ -180,7 +180,7 @@ export default function PopulationView() {
           indicatorId="structure-age"
           title="Structure par âge"
           subtitle="Répartition par grandes tranches selon les recensements"
-          source="Source : RGP 1975 → RGPH 2021"
+          source="Source : RGP 1975 - RGPH 2021"
           actions={
             <DownloadCSVButton csvFile="/data/onp/population_indice_structure_age.csv" />
           }

@@ -9,6 +9,7 @@ import {
   type CSSProperties,
 } from "react";
 import { geoIdentity, geoPath, type GeoGeometryObjects } from "d3-geo";
+import { classOf } from "./mapScale";
 
 // Types GeoJSON minimaux (évite la dépendance @types/geojson)
 type GeoFeature = {
@@ -48,6 +49,12 @@ type Props = {
   domain: [number, number];
   /** Rampe de couleur : du plus faible au plus fort */
   colorRamp?: string[];
+  /**
+   * Coupures entre classes, croissantes. Fournies, elles remplacent le
+   * découpage linéaire du domaine : c'est ce qui permet une échelle par
+   * quantiles. La rampe doit alors compter breaks.length + 1 couleurs.
+   */
+  breaks?: number[];
   /** Formatte la valeur affichée dans le tooltip */
   valueFormatter?: (value: number) => string;
   /** Formatte la valeur affichée sur la carte (au centroïde). Par défaut = valueFormatter */
@@ -85,8 +92,12 @@ function colorFor(
   value: number | null,
   [min, max]: [number, number],
   ramp: string[],
+  breaks?: number[],
 ): string {
   if (value == null || !Number.isFinite(value)) return NO_DATA_FILL;
+  if (breaks && breaks.length > 0) {
+    return ramp[Math.min(ramp.length - 1, classOf(value, breaks))];
+  }
   if (max <= min) return ramp[ramp.length - 1];
   const t = Math.min(1, Math.max(0, (value - min) / (max - min)));
   const idx = Math.min(ramp.length - 1, Math.floor(t * ramp.length));
@@ -155,6 +166,7 @@ export default function ChoroplethMap({
   valueByName,
   domain,
   colorRamp = DEFAULT_RAMP,
+  breaks,
   valueFormatter = (v) => v.toLocaleString("fr-FR"),
   labelFormatter,
   showLabels = true,
@@ -237,7 +249,7 @@ export default function ChoroplethMap({
       const rawName = (feature.properties?.[geoKey] as string) ?? "";
       const name = normalizeName(rawName);
       const value = valueByName.get(name) ?? null;
-      const fill = colorFor(value, domain, colorRamp);
+      const fill = colorFor(value, domain, colorRamp, breaks);
       const [cx, cy] = pathGen.centroid(feature);
       return {
         d: pathGen(feature) ?? "",
@@ -250,7 +262,7 @@ export default function ChoroplethMap({
         key: `${rawName}-${i}`,
       };
     });
-  }, [geo, geoKey, normalizeName, valueByName, domain, colorRamp, height]);
+  }, [geo, geoKey, normalizeName, valueByName, domain, colorRamp, breaks, height]);
 
   // Un SVG n'a pas de z-index : c'est l'ordre du document qui empile. La zone
   // agrandie passe donc en dernier, sinon ses voisines lui rognent les bords.
