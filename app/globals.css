@@ -223,6 +223,35 @@
   }
 }
 
+/* ── Bandeau d'information défilant ──────────────────────────────
+ * Le contenu est rendu deux fois côte à côte ; la piste se décale d'une
+ * moitié exactement, si bien que la seconde copie prend la place de la
+ * première au moment où l'animation reboucle. Le raccord est invisible.
+ */
+@keyframes defilement-bandeau {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.piste-defilante {
+  animation: defilement-bandeau var(--duree-defilement, 30s) linear infinite;
+}
+
+.bandeau-defilant:hover .piste-defilante,
+.bandeau-defilant:focus-within .piste-defilante {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .piste-defilante {
+    animation: none;
+  }
+}
+
 /* ── Texte des graphiques (Recharts) ─────────────────────────────
  * Noir en clair, blanc en sombre, pour tous les graphiques a la fois.
  * Une regle CSS l'emporte sur les attributs de presentation SVG
