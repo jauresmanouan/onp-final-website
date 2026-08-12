@@ -26,6 +26,9 @@ import {
   PRESENTATION,
   MISSIONS,
   IMPULSIONS,
+  HISTORIQUE,
+  ORGANISATION,
+  RESPONSABLES,
   DIRECTION,
   CONTACT,
 } from "@/content/site/institution";
@@ -58,6 +61,9 @@ export async function getInstitution() {
     presentation: PRESENTATION,
     missions: MISSIONS,
     impulsions: IMPULSIONS,
+    historique: HISTORIQUE,
+    organisation: ORGANISATION,
+    responsables: RESPONSABLES,
     direction: DIRECTION,
     contact: CONTACT,
   };
