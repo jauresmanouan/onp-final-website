@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
+import DashboardCTA from "@/components/accueil/DashboardCTA";
 
 export const metadata: Metadata = {
   title: "ONP — Office National de la Population",
@@ -57,26 +57,7 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-colors"
-            >
-              Accéder au tableau de bord
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </Link>
+            <DashboardCTA />
           </div>
         </div>
 
