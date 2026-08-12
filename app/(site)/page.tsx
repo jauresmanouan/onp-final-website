@@ -266,39 +266,63 @@ export default async function AccueilPage() {
         </div>
       </section>
 
-      {/* ── Partenaires ───────────────────────────────────────── */}
+      {/* ── Partenaires ─────────────────────────────────────────
+       * Un mur de logos ne dit rien à qui ne reconnaît pas les sigles. La
+       * grille nomme chaque organisation et l'écrit en toutes lettres.
+       */}
       <section aria-labelledby="partenaires-titre" className="border-t border-border bg-background">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16">
-          <h2
-            id="partenaires-titre"
-            className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
-          >
-            Partenaires techniques, financiers et scientifiques
-          </h2>
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+              Coopération
+            </p>
+            <h2
+              id="partenaires-titre"
+              className="mt-3 font-display text-3xl lg:text-4xl font-bold tracking-tight"
+            >
+              Ils accompagnent l&apos;Office
+            </h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              Agences des Nations Unies, bailleurs et centres de recherche
+              soutiennent les travaux de l&apos;Office sur la population, les
+              migrations et le dividende démographique.
+            </p>
+          </div>
+
           {/* Les logos sont hétérogènes : plusieurs sont des JPEG à fond
            * blanc opaque. Une pastille claire les accueille tous et préserve
            * leurs couleurs dans les deux thèmes, là où un filtre de teinte
            * transformerait les JPEG en rectangles pleins. */}
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <ul className="mt-12 grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
             {partenaires.map((p) => (
-              <a
-                key={p.nom}
-                href={p.site}
-                target="_blank"
-                rel="noreferrer noopener"
-                title={p.intitule}
-                className="flex h-16 w-36 items-center justify-center rounded-lg border border-border bg-white px-4 py-3 transition-shadow hover:shadow-md"
-              >
-                <Image
-                  src={p.logo}
-                  alt={p.intitule ?? p.nom}
-                  width={160}
-                  height={64}
-                  className="max-h-9 w-auto object-contain"
-                />
-              </a>
+              <li key={p.nom}>
+                <a
+                  href={p.site}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="group flex h-full flex-col gap-4"
+                >
+                  <span className="flex h-24 items-center justify-center rounded-xl border border-border bg-white px-6 transition-colors group-hover:border-primary/40">
+                    <Image
+                      src={p.logo}
+                      alt=""
+                      width={200}
+                      height={80}
+                      className="max-h-12 w-auto object-contain"
+                    />
+                  </span>
+                  <span>
+                    <span className="block font-semibold group-hover:text-primary transition-colors">
+                      {p.nom}
+                    </span>
+                    <span className="mt-1 block text-sm leading-snug text-muted-foreground">
+                      {p.intitule}
+                    </span>
+                  </span>
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
     </>
