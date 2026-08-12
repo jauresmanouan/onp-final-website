@@ -19,10 +19,10 @@ export default function ONPHeader() {
           <Image
             src="/onp_logo_vf.png"
             alt="Logo de l'Office National de la Population"
-            width={40}
-            height={32}
+            width={160}
+            height={128}
             priority
-            className="h-8 w-auto rounded-md object-contain"
+            className="h-12 w-auto rounded-md object-contain"
           />
           <div className="flex flex-col leading-tight">
             <span className="font-display font-semibold text-sm">

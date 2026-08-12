@@ -17,9 +17,9 @@ export default function HomePage() {
           <Image
             src="/onp_logo_vf.png"
             alt="Logo ONP"
-            width={44}
-            height={36}
-            className="h-9 w-auto rounded-md object-contain"
+            width={176}
+            height={144}
+            className="h-14 w-auto rounded-md object-contain"
             priority
           />
           <div className="flex flex-col leading-tight">
