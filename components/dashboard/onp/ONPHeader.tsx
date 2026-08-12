@@ -28,10 +28,10 @@ export default function ONPHeader() {
             <span className="font-display font-semibold text-sm">
               Office National de la Population
             </span>
-            <span className="text-[10px] text-muted-foreground hidden sm:inline">
+            {/* <span className="text-[10px] text-muted-foreground hidden sm:inline">
               Observatoire Gouvernemental des Données de Population et du
               Dividende Démographique
-            </span>
+            </span> */}
           </div>
         </Link>
 

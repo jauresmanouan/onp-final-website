@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import KPICard from "@/components/charts/KPICard";
+import KPICarousel from "@/components/charts/KPICarousel";
 import ChartCard from "@/components/charts/ChartCard";
 import IndicatorSwitcher from "@/components/charts/IndicatorSwitcher";
 import DownloadCSVButton from "@/components/charts/DownloadCSVButton";
@@ -105,7 +106,7 @@ function KPIsNationaux() {
       : null;
 
   return (
-    <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+    <KPICarousel itemWidth={240}>
       <KPICard
         indicatorId="ddmi"
         label="DDMI National 2020"
@@ -138,7 +139,7 @@ function KPIsNationaux() {
         sublabel="Cadre démo-économique"
         icon={Globe}
       />
-    </div>
+    </KPICarousel>
   );
 }
 

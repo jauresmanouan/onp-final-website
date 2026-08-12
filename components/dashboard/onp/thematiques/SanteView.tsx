@@ -1,6 +1,7 @@
 "use client";
 
 import KPICard from "@/components/charts/KPICard";
+import KPICarousel from "@/components/charts/KPICarousel";
 import IndicatorSwitcher from "@/components/charts/IndicatorSwitcher";
 import { CHART_COLORS } from "@/components/charts/chartColors";
 import { Heart, Baby, Activity, Users } from "lucide-react";
@@ -26,7 +27,7 @@ export default function SanteView() {
   return (
     <>
       {/* KPIs santé */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <KPICarousel itemWidth={240}>
         <KPICard
           indicatorId="isf"
           label="ISF 2021"
@@ -55,7 +56,7 @@ export default function SanteView() {
           sublabel="Pour 100 000 naissances"
           icon={Activity}
         />
-      </div>
+      </KPICarousel>
 
       {/* Groupe 1 - Indicateurs RGPH 1988-2021 (mêmes repères) */}
       <IndicatorSwitcher

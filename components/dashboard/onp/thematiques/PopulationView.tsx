@@ -7,6 +7,7 @@ import PopulationPyramid from "@/components/charts/PopulationPyramid";
 import CSVBarChart from "@/components/charts/CSVBarChart";
 import DownloadCSVButton from "@/components/charts/DownloadCSVButton";
 import KPICard from "@/components/charts/KPICard";
+import KPICarousel from "@/components/charts/KPICarousel";
 import { CHART_COLORS } from "@/components/charts/chartColors";
 import { useCSV } from "@/components/charts/useCSV";
 import {
@@ -67,7 +68,7 @@ export default function PopulationView() {
   return (
     <>
       {/* KPIs basés sur le recensement sélectionné */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
+      <KPICarousel itemWidth={240}>
         <KPICard
           indicatorId="population-totale"
           label="Population totale"
@@ -91,7 +92,7 @@ export default function PopulationView() {
             total > 0 ? `${((totalFemmes / total) * 100).toFixed(1)}%` : ""
           }
         />
-      </div>
+      </KPICarousel>
 
       {/* Pyramide des âges avec sélecteur recensement */}
       <ChartCard
