@@ -39,7 +39,11 @@ export default async function AccueilPage() {
        * la page, les autres se rangent dessous, et les armoiries restent en
        * filigrane : elles situent l'institution sans disputer la lecture.
        */}
-      <section className="relative overflow-hidden bg-panel text-panel-foreground px-60">
+      {/* Le retrait latéral n'arrive qu'aux très grandes largeurs : appliqué
+       * à toutes les tailles, il ne laissait plus de place au chiffre sur
+       * téléphone. Le conteneur interne garde l'alignement des autres
+       * sections. */}
+      <section className="relative overflow-hidden bg-panel text-panel-foreground 2xl:px-24">
         <Image
           src="/emblemes/armoiries-ci.svg"
           alt=""

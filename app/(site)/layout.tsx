@@ -11,8 +11,18 @@ export default function SiteLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      {/* Lien d'évitement : au clavier, la première tabulation saute la
+       * navigation, qui est identique d'une page à l'autre. */}
+      <a
+        href="#contenu"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-primary-foreground"
+      >
+        Aller au contenu
+      </a>
       <SiteHeader />
-      <main className="flex-1">{children}</main>
+      <main id="contenu" className="flex-1">
+        {children}
+      </main>
       <SiteFooter />
     </div>
   );
