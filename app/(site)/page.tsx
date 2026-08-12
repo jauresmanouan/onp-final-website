@@ -3,7 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { getChiffresCles } from "@/lib/siteStats";
-import { getActualites, getInstitution, getPartenaires } from "@/lib/content";
+import {
+  getActualites,
+  getAnnonce,
+  getInstitution,
+  getPartenaires,
+} from "@/lib/content";
+import BandeauAnnonce from "@/components/site/BandeauAnnonce";
 
 export const metadata: Metadata = {
   title: "Office National de la Population",
@@ -12,12 +18,14 @@ export const metadata: Metadata = {
 };
 
 export default async function AccueilPage() {
-  const [chiffres, actualites, partenaires, institution] = await Promise.all([
-    getChiffresCles(),
-    getActualites(3),
-    getPartenaires(),
-    getInstitution(),
-  ]);
+  const [chiffres, actualites, partenaires, institution, annonce] =
+    await Promise.all([
+      getChiffresCles(),
+      getActualites(3),
+      getPartenaires(),
+      getInstitution(),
+      getAnnonce(),
+    ]);
   const { identite, presentation, missions } = institution;
   const { principal } = chiffres;
 
@@ -34,6 +42,8 @@ export default async function AccueilPage() {
 
   return (
     <>
+      {annonce && <BandeauAnnonce annonce={annonce} />}
+
       {/* ── Ouverture ────────────────────────────────────────────
        * Le site s'ouvre sur ce qu'il mesure. Le chiffre du recensement tient
        * la page, les autres se rangent dessous, et les armoiries restent en

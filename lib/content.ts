@@ -42,6 +42,7 @@ import {
 } from "@/content/site/publications";
 
 import { COORDONNEES, FAQ, type Question } from "@/content/site/contact";
+import { ANNONCE, type Annonce } from "@/content/site/annonces";
 
 export type {
   Actualite,
@@ -49,7 +50,19 @@ export type {
   Publication,
   CategoriePublication,
   Question,
+  Annonce,
 };
+
+/**
+ * Le bandeau d'accueil, ou null s'il n'y a rien à annoncer. Une annonce
+ * dont la date d'expiration est passée est écartée ici, une seule fois,
+ * plutôt que vérifiée dans le composant.
+ */
+export async function getAnnonce(): Promise<Annonce | null> {
+  if (!ANNONCE) return null;
+  if (ANNONCE.expire && new Date(ANNONCE.expire) < new Date()) return null;
+  return ANNONCE;
+}
 
 export async function getCoordonnees() {
   return COORDONNEES;
