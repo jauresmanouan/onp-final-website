@@ -1,0 +1,198 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ChevronDown, Check } from "lucide-react";
+import VueEnsembleTab from "./tabs/VueEnsembleTab";
+import { IndicatorInfoProvider } from "./IndicatorInfoContext";
+import IndicatorInfoPanel from "./IndicatorInfoPanel";
+import IndicatorPanelBridge from "./IndicatorPanelBridge";
+
+const TabFallback = () => (
+  <div className="space-y-4 animate-pulse">
+    <div className="h-8 w-64 bg-muted rounded" />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="h-64 rounded-xl border border-border bg-card" />
+      <div className="h-64 rounded-xl border border-border bg-card" />
+    </div>
+  </div>
+);
+
+const DistrictsTab = dynamic(() => import("./tabs/DistrictsTab"), {
+  loading: TabFallback,
+});
+const PopulationView = dynamic(() => import("./thematiques/PopulationView"), {
+  loading: TabFallback,
+});
+const SanteView = dynamic(() => import("./thematiques/SanteView"), {
+  loading: TabFallback,
+});
+const DividendeDemoView = dynamic(
+  () => import("./thematiques/DividendeDemoView"),
+  { loading: TabFallback },
+);
+
+const THEMATIQUES = [
+  { value: "population", label: "Population" },
+  { value: "sante", label: "Santé" },
+  { value: "dividende-demo", label: "Dividende démographique" },
+] as const;
+
+const TAB_VALUES = [
+  "vue-ensemble",
+  "districts",
+  "population",
+  "sante",
+  "dividende-demo",
+] as const;
+
+type TabValue = (typeof TAB_VALUES)[number];
+
+function isValidTab(v: string): v is TabValue {
+  return (TAB_VALUES as readonly string[]).includes(v);
+}
+
+export default function ONPDashboard() {
+  const [activeTab, setActiveTab] = useState<TabValue>("vue-ensemble");
+  const [openThematique, setOpenThematique] = useState(false);
+
+  // Synchroniser l'onglet avec le hash de l'URL (#districts, #population, etc.)
+  useEffect(() => {
+    const applyHash = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (isValidTab(hash)) setActiveTab(hash);
+    };
+    applyHash();
+    window.addEventListener("hashchange", applyHash);
+    return () => window.removeEventListener("hashchange", applyHash);
+  }, []);
+
+  // Mettre à jour le hash quand l'onglet change (sans déclencher de scroll)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const next = `#${activeTab}`;
+    if (window.location.hash !== next) {
+      window.history.replaceState(null, "", next);
+    }
+  }, [activeTab]);
+
+  // Recherche d'indicateur (barre de la navbar) : basculer sur le bon onglet.
+  // L'ouverture de la fiche est gérée par IndicatorPanelBridge (dans le provider).
+  useEffect(() => {
+    const onOpenIndicator = (e: Event) => {
+      const tab = (e as CustomEvent<{ id: string; tab: string }>).detail?.tab;
+      if (tab && isValidTab(tab)) setActiveTab(tab);
+    };
+    window.addEventListener("onp:open-indicator", onOpenIndicator);
+    return () =>
+      window.removeEventListener("onp:open-indicator", onOpenIndicator);
+  }, []);
+
+  const isThematique = THEMATIQUES.some((t) => t.value === activeTab);
+  const currentThematique = THEMATIQUES.find((t) => t.value === activeTab);
+
+  return (
+    <IndicatorInfoProvider>
+      <div className="max-w-7xl mx-auto px-6 lg:px-20 xl:px-40 py-8">
+        {/* Titre de page */}
+        <div className="mb-8">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-emerald-50">
+            Tableau de bord
+          </h1>
+          <p className="text-sm text-emerald-200/80 mt-1">
+            Indicateurs nationaux de population - Côte d&apos;Ivoire · 1975–2021
+          </p>
+        </div>
+
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as TabValue)}
+          className="space-y-6"
+        >
+          <TabsList className="h-9 gap-1 bg-emerald-950 dark:bg-emerald-950/20 text-ele dark:text-white">
+            <TabsTrigger
+              value="vue-ensemble"
+              className="text-xs data-[state=active]:bg-orange-500 text-white"
+            >
+              Vue d&apos;ensemble
+            </TabsTrigger>
+            <TabsTrigger
+              value="districts"
+              className="text-xs data-[state=active]:bg-orange-500 text-white"
+            >
+              Districts
+            </TabsTrigger>
+
+            {/* "Thématiques" comme dropdown - styling aligné avec TabsTrigger */}
+            <Popover open={openThematique} onOpenChange={setOpenThematique}>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  data-state={isThematique ? "active" : "inactive"}
+                  className="dark:data-[state=active]:text-foreground dark:data-[state=active]:border-input dark:text-muted-foreground inline-flex h-[calc(100%-1px)] items-center justify-center gap-1.5 rounded-md border border-transparent px-3 py-1 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] cursor-pointer data-[state=active]:shadow-sm data-[state=active]:bg-orange-500 text-white dark:data-[state=active]:bg-orange-600"
+                >
+                  Thématiques
+                  {currentThematique && (
+                    <span className="text-white">
+                      · {currentThematique.label}
+                    </span>
+                  )}
+                  <ChevronDown className="h-3 w-3 opacity-60" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-56 p-1">
+                {THEMATIQUES.map((t) => {
+                  const isActive = activeTab === t.value;
+                  return (
+                    <button
+                      key={t.value}
+                      type="button"
+                      onClick={() => {
+                        setActiveTab(t.value);
+                        setOpenThematique(false);
+                      }}
+                      className={`grid w-full grid-cols-[1rem_1fr] items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-left transition-colors cursor-pointer ${
+                        isActive
+                          ? "bg-muted text-foreground"
+                          : "hover:bg-muted/60 text-foreground"
+                      }`}
+                    >
+                      <span className="flex h-4 w-4 items-center justify-center">
+                        {isActive && <Check className="h-3.5 w-3.5" />}
+                      </span>
+                      <span>{t.label}</span>
+                    </button>
+                  );
+                })}
+              </PopoverContent>
+            </Popover>
+          </TabsList>
+
+          <TabsContent value="vue-ensemble" className="space-y-6">
+            <VueEnsembleTab />
+          </TabsContent>
+          <TabsContent value="districts" className="space-y-6">
+            <DistrictsTab />
+          </TabsContent>
+          <TabsContent value="population" className="space-y-6">
+            <PopulationView />
+          </TabsContent>
+          <TabsContent value="sante" className="space-y-6">
+            <SanteView />
+          </TabsContent>
+          <TabsContent value="dividende-demo" className="space-y-6">
+            <DividendeDemoView />
+          </TabsContent>
+        </Tabs>
+      </div>
+      <IndicatorInfoPanel />
+      <IndicatorPanelBridge />
+    </IndicatorInfoProvider>
+  );
+}
