@@ -61,7 +61,12 @@ const DEFAULT_RAMP = [
   "#15803D", // green-700
 ];
 
-const NO_DATA_FILL = "#E2E8F0"; // slate-200
+/**
+ * Districts sans valeur : la teinte suit le thème, donc elle n'est pas un
+ * hex mais une variable CSS. Le calcul de contraste des étiquettes ne peut
+ * pas la lire, d'où le traitement à part dans textColorFor.
+ */
+const NO_DATA_FILL = "var(--map-no-data)";
 
 const WIDTH = 520;
 
@@ -78,14 +83,23 @@ function colorFor(
 }
 
 /** Couleur de texte lisible (blanc ou gris foncé) selon la luminance du fond. */
-function textColorFor(hex: string): string {
-  const m = hex.replace("#", "");
+function textColorFor(fill: string): string {
+  // Remplissage "aucune donnée" : sa clarté dépend du thème, on délègue au CSS
+  if (fill === NO_DATA_FILL) return "var(--map-no-data-foreground)";
+  const m = fill.replace("#", "");
   const r = parseInt(m.slice(0, 2), 16);
   const g = parseInt(m.slice(2, 4), 16);
   const b = parseInt(m.slice(4, 6), 16);
   // luminance perçue (sRGB)
   const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return lum > 0.6 ? "#0F172A" : "#FFFFFF"; // slate-900 sinon blanc
+}
+
+/** Halo porté par les étiquettes, à l'opposé de leur couleur de texte. */
+function haloFor(textColor: string): string {
+  if (textColor === "#FFFFFF") return "rgba(15,23,42,0.45)";
+  if (textColor === "#0F172A") return "rgba(255,255,255,0.55)";
+  return "var(--map-no-data)"; // cas thème : le halo reprend le fond
 }
 
 export default function ChoroplethMap({
@@ -172,7 +186,7 @@ export default function ChoroplethMap({
               key={p.key}
               d={p.d}
               fill={p.fill}
-              stroke="#FFFFFF"
+              stroke="var(--map-stroke)"
               strokeWidth={0.75}
               style={{ transition: "fill 0.2s", cursor: "pointer" }}
               onMouseEnter={(e) =>
@@ -206,10 +220,7 @@ export default function ChoroplethMap({
                   fill={p.textColor}
                   style={{
                     paintOrder: "stroke",
-                    stroke:
-                      p.textColor === "#FFFFFF"
-                        ? "rgba(15,23,42,0.45)"
-                        : "rgba(255,255,255,0.55)",
+                    stroke: haloFor(p.textColor),
                     strokeWidth: 2,
                     strokeLinejoin: "round",
                   }}

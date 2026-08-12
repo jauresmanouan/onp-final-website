@@ -131,7 +131,7 @@ export default function MiniTrendChart({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-start justify-between gap-2 min-h-[2.5rem]">
-        <h3 className="text-sm font-semibold text-emerald-950 leading-snug">
+        <h3 className="text-sm font-semibold text-tile-foreground leading-snug">
           {title}
         </h3>
         {indicatorId && (
@@ -144,7 +144,7 @@ export default function MiniTrendChart({
 
       <div className="relative">
         {/* Étiquette de l'axe Y (max + unité) en haut à gauche */}
-        <div className="absolute left-0 top-0 text-[11px] font-medium text-emerald-950/70 z-10">
+        <div className="absolute left-0 top-0 text-[11px] font-medium text-tile-muted z-10">
           {Math.round(yDomain[1])}
           {yUnitSymbol}
         </div>

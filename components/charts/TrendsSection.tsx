@@ -23,13 +23,16 @@ const COLUMN_CLASSES: Record<2 | 3 | 4, string> = {
   4: "grid-cols-2 lg:grid-cols-4",
 };
 
-// Palette unifiée du dashboard ONP : cartes claires (slate-300) sur fond vert
-// foncé (emerald-950), texte et bordures emerald-950 pour la cohérence.
+// Palette unifiée du dashboard ONP : tuiles posées sur le panneau de fond.
+// Les tons sont volontairement identiques ; ils passent par les tokens de
+// thème pour suivre le mode clair comme le mode sombre.
+const TILE_CLASSES = "bg-tile text-tile-foreground border-tile-border shadow-sm";
+
 const TONE_CLASSES: Record<NonNullable<Props["tone"]>, string> = {
-  green: "bg-slate-300 text-emerald-950 border-emerald-950/20 shadow-sm",
-  blue: "bg-slate-300 text-emerald-950 border-emerald-950/20 shadow-sm",
-  white: "bg-slate-300 text-emerald-950 border-emerald-950/20 shadow-sm",
-  neutral: "bg-slate-300 text-emerald-950 border-emerald-950/20 shadow-sm",
+  green: TILE_CLASSES,
+  blue: TILE_CLASSES,
+  white: TILE_CLASSES,
+  neutral: TILE_CLASSES,
 };
 
 export default function TrendsSection({
@@ -59,7 +62,7 @@ export default function TrendsSection({
 
         {/* Description + source */}
         {(description || source || dataLink) && (
-          <div className="mt-8 pt-6 border-t border-emerald-950/15 space-y-2">
+          <div className="mt-8 pt-6 border-t border-tile-border space-y-2">
             {description && (
               <p className="text-xs sm:text-sm leading-relaxed opacity-80">
                 {description}

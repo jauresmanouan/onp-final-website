@@ -31,7 +31,7 @@ export default function DownloadCSVButton({
       type="button"
       onClick={handleDownload}
       aria-label="Télécharger les données au format CSV"
-      className="inline-flex items-center gap-1.5 h-7 px-2 text-xs font-medium text-emerald-950 border border-emerald-950/30 rounded-md cursor-pointer transition-colors hover:border-emerald-950/60 hover:bg-emerald-950/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+      className="inline-flex items-center gap-1.5 h-7 px-2 text-xs font-medium text-tile-foreground border border-tile-border rounded-md cursor-pointer transition-colors hover:border-tile-foreground/50 hover:bg-tile-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
     >
       <Download className="h-3.5 w-3.5" />
       {compact ? "CSV" : "Télécharger"}

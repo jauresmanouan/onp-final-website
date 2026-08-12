@@ -161,7 +161,7 @@ export default function DistrictsTab() {
         </ResponsiveContainer>
       </ChartCard>
 
-      <Card className="bg-slate-300 border border-border/80 shadow-md hover:shadow-lg transition-shadow ring-1 ring-black/[0.02] dark:ring-white/[0.03]">
+      <Card className="bg-tile text-tile-foreground border border-tile-border shadow-md hover:shadow-lg transition-shadow ring-1 ring-black/[0.02] dark:ring-white/[0.03]">
         <CardContent className="p-0">
           <div className="px-5 py-4 border-b border-border flex items-start justify-between gap-3">
             <div>

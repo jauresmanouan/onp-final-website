@@ -83,7 +83,7 @@ export default function DistrictChoropleth() {
             value={indicator}
             onValueChange={(v) => setIndicator(v as DistrictIndicatorKey)}
           >
-            <SelectTrigger className="h-8 w-[260px] text-sm bg-slate-200">
+            <SelectTrigger className="h-8 w-[260px] text-sm bg-tile text-tile-foreground border-tile-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -101,7 +101,7 @@ export default function DistrictChoropleth() {
             Couleurs
           </span>
           <Select value={paletteId} onValueChange={setPaletteId}>
-            <SelectTrigger className="h-8 w-[220px] text-sm bg-slate-200">
+            <SelectTrigger className="h-8 w-[220px] text-sm bg-tile text-tile-foreground border-tile-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -195,7 +195,7 @@ function Legend({
           );
         })}
         <div className="flex items-center gap-2 mt-1">
-          <span className="h-3.5 w-6 rounded-sm border border-border/50 bg-slate-200" />
+          <span className="h-3.5 w-6 rounded-sm border border-border/50 bg-[var(--map-no-data)]" />
           <span className="text-[11px]" style={{ color: "var(--chart-text)" }}>
             Indisponible
           </span>

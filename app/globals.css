@@ -38,6 +38,13 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* Surfaces du dashboard : le panneau de fond et les tuiles posees dessus */
+  --color-panel: var(--panel);
+  --color-panel-foreground: var(--panel-foreground);
+  --color-tile: var(--tile);
+  --color-tile-foreground: var(--tile-foreground);
+  --color-tile-border: var(--tile-border);
+  --color-tile-muted: var(--tile-muted);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -85,6 +92,22 @@
 
   /* Texte des graphiques : axes, graduations, legendes, infobulles */
   --chart-text: #000000;
+
+  /* ── Surfaces du dashboard ──
+   * Le panneau vert profond et les tuiles claires posees dessus.
+   * Les composants s'y referent au lieu d'ecrire emerald-950 / slate-300
+   * en dur, ce qui laissait le dashboard identique dans les deux themes.
+   */
+  --panel: #065F46; /* emerald-800 */
+  --panel-foreground: #ECFDF5;
+  --tile: #CBD5E1;
+  --tile-foreground: #022C22;
+  --tile-muted: rgb(2 44 34 / 70%);
+  --tile-border: rgb(2 44 34 / 20%);
+  /* Choroplethe : districts sans valeur et traits de frontiere */
+  --map-no-data: #E2E8F0;
+  --map-no-data-foreground: #0F172A;
+  --map-stroke: #FFFFFF;
 
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.18 0.01 250);
@@ -135,6 +158,23 @@
 
   /* Le pendant lisible du noir sur fond sombre */
   --chart-text: #FFFFFF;
+
+  /* ── Surfaces du dashboard ──
+   * On garde la teinte verte de la marque mais desaturee et assombrie :
+   * un emerald sature en grande surface fatigue l'oeil de nuit. Les tuiles
+   * remontent d'un cran en clarte pour rester detachees du panneau.
+   */
+  --panel: oklch(0.17 0.022 165);
+  --panel-foreground: oklch(0.96 0.005 250);
+  --tile: oklch(0.235 0.018 165);
+  --tile-foreground: oklch(0.96 0.005 250);
+  --tile-muted: oklch(0.78 0.012 250);
+  --tile-border: oklch(1 0 0 / 12%);
+  --map-no-data: oklch(0.33 0.008 250);
+  --map-no-data-foreground: oklch(0.96 0.005 250);
+  /* Un trait blanc entre districts eblouit sur fond sombre : on prend la
+   * teinte du panneau, qui lit comme une separation et non comme un halo. */
+  --map-stroke: oklch(0.17 0.022 165);
 
   --sidebar: oklch(0.21 0.013 250);
   --sidebar-foreground: oklch(0.96 0.005 250);

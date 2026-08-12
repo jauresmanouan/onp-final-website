@@ -102,10 +102,10 @@ export default function ONPDashboard() {
       <div className="max-w-7xl mx-auto px-6 lg:px-20 xl:px-40 py-8">
         {/* Titre de page */}
         <div className="mb-8">
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-emerald-50">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-panel-foreground">
             Tableau de bord
           </h1>
-          <p className="text-sm text-emerald-200/80 mt-1">
+          <p className="text-sm text-panel-foreground/80 mt-1">
             Indicateurs nationaux de population - Côte d&apos;Ivoire · 1975–2021
           </p>
         </div>
@@ -115,16 +115,16 @@ export default function ONPDashboard() {
           onValueChange={(v) => setActiveTab(v as TabValue)}
           className="space-y-6"
         >
-          <TabsList className="h-9 gap-1 bg-emerald-950 dark:bg-emerald-950/20 text-ele dark:text-white">
+          <TabsList className="h-9 gap-1 bg-panel text-panel-foreground">
             <TabsTrigger
               value="vue-ensemble"
-              className="text-xs data-[state=active]:bg-orange-500 text-white"
+              className="text-xs text-panel-foreground data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
             >
               Vue d&apos;ensemble
             </TabsTrigger>
             <TabsTrigger
               value="districts"
-              className="text-xs data-[state=active]:bg-orange-500 text-white"
+              className="text-xs text-panel-foreground data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
             >
               Districts
             </TabsTrigger>
@@ -135,11 +135,11 @@ export default function ONPDashboard() {
                 <button
                   type="button"
                   data-state={isThematique ? "active" : "inactive"}
-                  className="dark:data-[state=active]:text-foreground dark:data-[state=active]:border-input dark:text-muted-foreground inline-flex h-[calc(100%-1px)] items-center justify-center gap-1.5 rounded-md border border-transparent px-3 py-1 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] cursor-pointer data-[state=active]:shadow-sm data-[state=active]:bg-orange-500 text-white dark:data-[state=active]:bg-orange-600"
+                  className="inline-flex h-[calc(100%-1px)] items-center justify-center gap-1.5 rounded-md border border-transparent px-3 py-1 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] cursor-pointer text-panel-foreground data-[state=active]:shadow-sm data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
                 >
                   Thématiques
                   {currentThematique && (
-                    <span className="text-white">
+                    <span className="opacity-80">
                       · {currentThematique.label}
                     </span>
                   )}

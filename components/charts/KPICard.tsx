@@ -20,19 +20,19 @@ type Props = {
 
 export default function KPICard({ label, value, sublabel, trend, indicatorId }: Props) {
   return (
-    <Card className="bg-slate-300 border-emerald-950/20 dark:bg-emerald-950/20 text-emerald-950 dark:text-emerald-50">
+    <Card className="bg-tile border-tile-border text-tile-foreground">
       <CardContent>
         <div className="flex items-start justify-between gap-2 mb-2">
-          <p className="text-xs font-medium text-emerald-950/70 uppercase tracking-wide">
+          <p className="text-xs font-medium text-tile-muted uppercase tracking-wide">
             {label}
           </p>
           {indicatorId && <IndicatorInfoButton indicatorId={indicatorId} />}
         </div>
-        <div className="font-display text-3xl font-bold text-emerald-950 leading-tight">
+        <div className="font-display text-3xl font-bold text-tile-foreground leading-tight">
           {value}
         </div>
         {sublabel && (
-          <p className="text-xs text-emerald-950/70 mt-1">{sublabel}</p>
+          <p className="text-xs text-tile-muted mt-1">{sublabel}</p>
         )}
         {trend && (
           <p
