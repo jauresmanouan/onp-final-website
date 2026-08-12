@@ -97,7 +97,7 @@ export default function ONPFooter() {
 
         <div className="mt-10 pt-6 border-t border-border">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Office National de la Population — Tous
+            © {new Date().getFullYear()} Office National de la Population · Tous
             droits réservés.
           </p>
         </div>

@@ -19,7 +19,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://onp.ci";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "ONP — Observatoire des Données de Population",
+    default: "ONP · Observatoire des Données de Population",
     template: "%s | ONP Côte d'Ivoire",
   },
   description:

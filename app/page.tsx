@@ -3,7 +3,7 @@ import Image from "next/image";
 import DashboardCTA from "@/components/accueil/DashboardCTA";
 
 export const metadata: Metadata = {
-  title: "ONP — Office National de la Population",
+  title: "ONP · Office National de la Population",
   description:
     "Accédez aux données et indicateurs officiels de population de Côte d'Ivoire.",
 };
@@ -52,8 +52,8 @@ export default function HomePage() {
 
           <p className="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
             Explorez les indicateurs officiels de population de Côte
-            d&apos;Ivoire — pyramides des âges, santé, dividende
-            démographique — au niveau national et par district.
+            d&apos;Ivoire (pyramides des âges, santé, dividende
+            démographique) au niveau national et par district.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
@@ -64,7 +64,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-100 dark:border-gray-800 px-6 py-5 text-center text-xs text-gray-400 dark:text-gray-600">
-        © {new Date().getFullYear()} Office National de la Population — Côte d&apos;Ivoire
+        © {new Date().getFullYear()} Office National de la Population · Côte d&apos;Ivoire
       </footer>
     </div>
   );

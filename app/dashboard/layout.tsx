@@ -5,7 +5,7 @@ import ONPFooter from "@/components/dashboard/onp/ONPFooter";
 export const metadata: Metadata = {
   title: "Tableau de bord",
   description:
-    "Indicateurs nationaux de population de Côte d'Ivoire — données officielles de l'ONP.",
+    "Indicateurs nationaux de population de Côte d'Ivoire, données officielles de l'ONP.",
 };
 
 export default function DashboardLayout({
