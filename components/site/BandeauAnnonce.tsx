@@ -47,17 +47,9 @@ export default function BandeauAnnonce({ annonce }: { annonce: Annonce }) {
   // Un message long doit défiler plus longtemps pour rester lisible.
   const duree = Math.max(24, Math.round(annonce.message.length / 4));
 
-  const contenu = (
-    <>
-      <span className={`font-semibold uppercase tracking-wide ${accent}`}>
-        {annonce.etiquette}
-      </span>
-      <span className="mx-2.5 text-muted-foreground" aria-hidden="true">
-        ·
-      </span>
-      {annonce.message}
-    </>
-  );
+  // Seul le message défile : une étiquette qui glisse hors du cadre se lit
+  // tronquée, « DONNÉES » devenant « NNÉES » au bout de quelques secondes.
+  const contenu = <>{annonce.message}</>;
 
   return (
     <div
@@ -69,6 +61,13 @@ export default function BandeauAnnonce({ annonce }: { annonce: Annonce }) {
         <span className="relative flex size-2.5 shrink-0" aria-hidden="true">
           <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-500 opacity-70" />
           <span className="relative inline-flex size-2.5 rounded-full bg-red-600" />
+        </span>
+
+        {/* Étiquette fixe, hors du défilement */}
+        <span
+          className={`hidden shrink-0 text-sm font-semibold uppercase tracking-wide sm:inline ${accent}`}
+        >
+          {annonce.etiquette}
         </span>
 
         {/* La piste porte deux copies : la seconde masque le raccord */}
