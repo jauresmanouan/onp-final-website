@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { geoIdentity, geoPath, type GeoGeometryObjects } from "d3-geo";
 
 // Types GeoJSON minimaux (évite la dépendance @types/geojson)
@@ -49,6 +56,10 @@ type Props = {
   showLabels?: boolean;
   /** Hauteur du SVG en px */
   height?: number;
+  /** Appelé au clic sur une zone : ouvre la fiche du district */
+  onSelect?: (name: string) => void;
+  /** Zone actuellement sélectionnée, mise en avant sur la carte */
+  selectedName?: string | null;
 };
 
 const DEFAULT_RAMP = [
@@ -95,6 +106,41 @@ function textColorFor(fill: string): string {
   return lum > 0.6 ? "#0F172A" : "#FFFFFF"; // slate-900 sinon blanc
 }
 
+/**
+ * Mise en avant d'une zone par un léger grossissement, plutôt que par un
+ * contour rapporté : la forme du district reste la seule ligne à l'écran.
+ * Le grossissement part du centroïde, donc la zone gonfle sur place au lieu
+ * de glisser, et une ombre courte la décolle de ses voisines.
+ */
+function liftStyle(
+  p: { cx: number; cy: number },
+  isSelected: boolean,
+  isHovered: boolean,
+): CSSProperties {
+  const scale = isSelected ? 1.07 : isHovered ? 1.025 : 1;
+
+  // Montée vive, retombée plus longue et amortie : en quittant un district
+  // pour un autre, la zone abandonnée redescend derrière la nouvelle au lieu
+  // de claquer, ce qui donne un enchaînement continu plutôt que deux à-coups.
+  const transition =
+    scale === 1
+      ? "transform 340ms cubic-bezier(0.33, 0, 0.15, 1), filter 300ms ease-out, fill 200ms ease-out"
+      : "transform 200ms cubic-bezier(0.22, 1, 0.36, 1), filter 180ms ease-out, fill 200ms ease-out";
+
+  const base: CSSProperties = { transition };
+  if (scale === 1 || !Number.isFinite(p.cx) || !Number.isFinite(p.cy)) {
+    return base;
+  }
+  return {
+    ...base,
+    transformOrigin: `${p.cx}px ${p.cy}px`,
+    transform: `scale(${scale})`,
+    filter: isSelected
+      ? "drop-shadow(0 1.5px 2.5px rgb(0 0 0 / 0.35))"
+      : undefined,
+  };
+}
+
 /** Halo porté par les étiquettes, à l'opposé de leur couleur de texte. */
 function haloFor(textColor: string): string {
   if (textColor === "#FFFFFF") return "rgba(15,23,42,0.45)";
@@ -113,6 +159,8 @@ export default function ChoroplethMap({
   labelFormatter,
   showLabels = true,
   height = 460,
+  onSelect,
+  selectedName = null,
 }: Props) {
   const fmtLabel = labelFormatter ?? valueFormatter;
   const [geo, setGeo] = useState<FeatureCollection | null>(null);
@@ -122,6 +170,41 @@ export default function ChoroplethMap({
     x: number;
     y: number;
   } | null>(null);
+
+  /**
+   * Les zones sont séparées par un liseré : en glissant d'un district au
+   * suivant, le curseur passe une poignée de millisecondes sur le vide et
+   * déclenche une sortie parasite. On diffère l'effacement, qu'une entrée
+   * immédiate annule ; le survol enchaîne alors sans clignoter.
+   */
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelLeave = useCallback(() => {
+    if (leaveTimer.current) {
+      clearTimeout(leaveTimer.current);
+      leaveTimer.current = null;
+    }
+  }, []);
+
+  const enterZone = useCallback(
+    (p: { name: string; value: number | null }, e: React.MouseEvent) => {
+      cancelLeave();
+      setHovered({ name: p.name, value: p.value, x: e.clientX, y: e.clientY });
+    },
+    [cancelLeave],
+  );
+
+  const moveZone = useCallback((e: React.MouseEvent) => {
+    const { clientX, clientY } = e;
+    setHovered((h) => (h ? { ...h, x: clientX, y: clientY } : h));
+  }, []);
+
+  const leaveZone = useCallback(() => {
+    cancelLeave();
+    leaveTimer.current = setTimeout(() => setHovered(null), 90);
+  }, [cancelLeave]);
+
+  useEffect(() => cancelLeave, [cancelLeave]);
 
   // Charge le GeoJSON une fois
   useEffect(() => {
@@ -169,6 +252,96 @@ export default function ChoroplethMap({
     });
   }, [geo, geoKey, normalizeName, valueByName, domain, colorRamp, height]);
 
+  // Un SVG n'a pas de z-index : c'est l'ordre du document qui empile. La zone
+  // agrandie passe donc en dernier, sinon ses voisines lui rognent les bords.
+  const ordered = useMemo(() => {
+    if (!selectedName) return paths;
+    const front = paths.filter((p) => p.name === selectedName);
+    if (front.length === 0) return paths;
+    return [...paths.filter((p) => p.name !== selectedName), ...front];
+  }, [paths, selectedName]);
+
+  // Le suivi du curseur pour l'infobulle change à chaque pixel parcouru.
+  // Les tracés, eux, ne dépendent que de la zone survolée : on les mémoïse
+  // sur ce seul nom, sinon les quatorze formes seraient reconstruites à
+  // chaque mouvement de souris et l'animation en deviendrait saccadée.
+  const hoveredName = hovered?.name ?? null;
+
+  const shapes = useMemo(
+    () => (
+      <g>
+        {ordered.map((p) => {
+          const isSelected = selectedName === p.name;
+          return (
+            <path
+              key={p.key}
+              d={p.d}
+              fill={p.fill}
+              stroke="var(--map-stroke)"
+              strokeWidth={0.75}
+              role={onSelect ? "button" : undefined}
+              tabIndex={onSelect ? 0 : undefined}
+              aria-label={onSelect ? `Voir les statistiques de ${p.name}` : undefined}
+              aria-pressed={onSelect ? isSelected : undefined}
+              style={{
+                ...liftStyle(p, isSelected, hoveredName === p.name),
+                cursor: "pointer",
+                outline: "none",
+              }}
+              onClick={() => onSelect?.(p.name)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect?.(p.name);
+                }
+              }}
+              onMouseEnter={(e) => enterZone(p, e)}
+              onMouseMove={moveZone}
+              onMouseLeave={leaveZone}
+            />
+          );
+        })}
+      </g>
+    ),
+    [ordered, selectedName, hoveredName, onSelect, enterZone, moveZone, leaveZone],
+  );
+
+  const labels = useMemo(
+    () => (
+      <g style={{ pointerEvents: "none" }}>
+        {ordered.map((p) =>
+          Number.isFinite(p.cx) && Number.isFinite(p.cy) ? (
+            <text
+              key={`label-${p.key}`}
+              x={p.cx}
+              y={p.cy}
+              textAnchor="middle"
+              fill={p.textColor}
+              style={{
+                paintOrder: "stroke",
+                stroke: haloFor(p.textColor),
+                strokeWidth: 2,
+                strokeLinejoin: "round",
+                // L'etiquette suit exactement le zoom de sa zone
+                ...liftStyle(p, selectedName === p.name, hoveredName === p.name),
+              }}
+            >
+              <tspan x={p.cx} dy="-0.1em" fontSize={9} fontWeight={600}>
+                {p.name}
+              </tspan>
+              {p.value != null && (
+                <tspan x={p.cx} dy="1.1em" fontSize={8.5} fontWeight={700}>
+                  {fmtLabel(p.value)}
+                </tspan>
+              )}
+            </text>
+          ) : null,
+        )}
+      </g>
+    ),
+    [ordered, selectedName, hoveredName, fmtLabel],
+  );
+
   return (
     <div className="relative w-full">
       <svg
@@ -180,64 +353,8 @@ export default function ChoroplethMap({
         role="img"
         aria-label="Carte choroplèthe des districts"
       >
-        <g>
-          {paths.map((p) => (
-            <path
-              key={p.key}
-              d={p.d}
-              fill={p.fill}
-              stroke="var(--map-stroke)"
-              strokeWidth={0.75}
-              style={{ transition: "fill 0.2s", cursor: "pointer" }}
-              onMouseEnter={(e) =>
-                setHovered({
-                  name: p.name,
-                  value: p.value,
-                  x: e.clientX,
-                  y: e.clientY,
-                })
-              }
-              onMouseMove={(e) =>
-                setHovered((h) =>
-                  h ? { ...h, x: e.clientX, y: e.clientY } : h,
-                )
-              }
-              onMouseLeave={() => setHovered(null)}
-            />
-          ))}
-        </g>
-
-        {/* Étiquettes au centroïde : nom du district + valeur de l'indicateur */}
-        {showLabels && (
-          <g style={{ pointerEvents: "none" }}>
-            {paths.map((p) =>
-              Number.isFinite(p.cx) && Number.isFinite(p.cy) ? (
-                <text
-                  key={`label-${p.key}`}
-                  x={p.cx}
-                  y={p.cy}
-                  textAnchor="middle"
-                  fill={p.textColor}
-                  style={{
-                    paintOrder: "stroke",
-                    stroke: haloFor(p.textColor),
-                    strokeWidth: 2,
-                    strokeLinejoin: "round",
-                  }}
-                >
-                  <tspan x={p.cx} dy="-0.1em" fontSize={9} fontWeight={600}>
-                    {p.name}
-                  </tspan>
-                  {p.value != null && (
-                    <tspan x={p.cx} dy="1.1em" fontSize={8.5} fontWeight={700}>
-                      {fmtLabel(p.value)}
-                    </tspan>
-                  )}
-                </text>
-              ) : null,
-            )}
-          </g>
-        )}
+        {shapes}
+        {showLabels && labels}
       </svg>
 
       {hovered && (
@@ -253,6 +370,11 @@ export default function ChoroplethMap({
               ? valueFormatter(hovered.value)
               : "Donnée indisponible"}
           </div>
+          {onSelect && (
+            <div className="mt-1 text-[11px] text-muted-foreground">
+              Cliquer pour voir toutes les statistiques
+            </div>
+          )}
         </div>
       )}
     </div>

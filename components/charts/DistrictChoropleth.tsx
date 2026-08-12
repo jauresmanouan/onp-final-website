@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useCSV } from "./useCSV";
 import { parseNumber, formatFrench, formatCompactNumber } from "./transformCSV";
 import ChoroplethMap from "./ChoroplethMap";
+import DistrictStatsPanel from "./DistrictStatsPanel";
 import {
   MAP_PALETTES,
   DEFAULT_PALETTE_ID,
@@ -44,6 +45,7 @@ export default function DistrictChoropleth() {
   );
   const [indicator, setIndicator] = useState<DistrictIndicatorKey>("population");
   const [paletteId, setPaletteId] = useState<string>(DEFAULT_PALETTE_ID);
+  const [selected, setSelected] = useState<string | null>(null);
 
   const current = getDistrictIndicator(indicator);
   const palette = getPalette(paletteId);
@@ -141,6 +143,8 @@ export default function DistrictChoropleth() {
               colorRamp={palette.ramp}
               valueFormatter={valueFormatter}
               labelFormatter={legendFormatter}
+              onSelect={setSelected}
+              selectedName={selected}
             />
           )}
         </div>
@@ -155,6 +159,12 @@ export default function DistrictChoropleth() {
           />
         )}
       </div>
+
+      <DistrictStatsPanel
+        district={selected}
+        rows={data}
+        onClose={() => setSelected(null)}
+      />
     </div>
   );
 }
