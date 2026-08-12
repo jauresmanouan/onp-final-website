@@ -286,53 +286,46 @@ export default async function AccueilPage() {
        */}
       <section aria-labelledby="partenaires-titre" className="border-t border-border bg-background">
         <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-              Coopération
-            </p>
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
             <h2
               id="partenaires-titre"
-              className="mt-3 font-display text-3xl lg:text-4xl font-bold tracking-tight"
+              className="font-display text-2xl font-bold tracking-tight"
             >
-              Ils accompagnent l&apos;Office
+              Partenaires
             </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              Agences des Nations Unies, bailleurs et centres de recherche
-              soutiennent les travaux de l&apos;Office sur la population, les
-              migrations et le dividende démographique.
-            </p>
+            <Link
+              href="/partenaires"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:gap-3 transition-all"
+            >
+              Voir tous les partenaires
+              <ArrowRight className="size-4" />
+            </Link>
           </div>
 
           {/* Les logos sont hétérogènes : plusieurs sont des JPEG à fond
            * blanc opaque. Une pastille claire les accueille tous et préserve
            * leurs couleurs dans les deux thèmes, là où un filtre de teinte
            * transformerait les JPEG en rectangles pleins. */}
-          <ul className="mt-12 grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Sur l'accueil, les logos suffisent : le détail des organisations
+           * est donné sur la page Partenaires. Le nom complet reste en
+           * infobulle et en texte alternatif. */}
+          <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {partenaires.map((p) => (
               <li key={p.nom}>
                 <a
                   href={p.site}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="group flex h-full flex-col gap-4"
+                  title={p.intitule}
+                  className="flex h-20 items-center justify-center rounded-xl border border-border bg-white px-5 transition-colors hover:border-primary/40"
                 >
-                  <span className="flex h-24 items-center justify-center rounded-xl border border-border bg-white px-6 transition-colors group-hover:border-primary/40">
-                    <Image
-                      src={p.logo}
-                      alt=""
-                      width={200}
-                      height={80}
-                      className="max-h-12 w-auto object-contain"
-                    />
-                  </span>
-                  <span>
-                    <span className="block font-semibold group-hover:text-primary transition-colors">
-                      {p.nom}
-                    </span>
-                    <span className="mt-1 block text-sm leading-snug text-muted-foreground">
-                      {p.intitule}
-                    </span>
-                  </span>
+                  <Image
+                    src={p.logo}
+                    alt={p.intitule ?? p.nom}
+                    width={200}
+                    height={80}
+                    className="max-h-10 w-auto object-contain"
+                  />
                 </a>
               </li>
             ))}
