@@ -17,6 +17,8 @@ export type Publication = {
   /** Résumé court, rédigé à partir du titre et de l'objet du document. */
   resume: string;
   fichier: string;
+  /** Première page du PDF, rendue au build par pdftoppm. */
+  apercu: string;
   /** Poids en kilo-octets, affiché avant le téléchargement. */
   poidsKo: number;
   annee?: number;
@@ -50,6 +52,7 @@ export const PUBLICATIONS: Publication[] = [
     resume:
       "Première note de la série : ce qu'est le dividende démographique et les conditions de sa réalisation en Côte d'Ivoire.",
     fichier: "/documents/onp/note-politique-1.pdf",
+    apercu: "/documents/onp/apercus/note-politique-1.jpg",
     poidsKo: 1128,
   },
   {
@@ -60,6 +63,7 @@ export const PUBLICATIONS: Publication[] = [
     resume:
       "Ce que la transition démographique peut apporter à la trajectoire d'émergence du pays.",
     fichier: "/documents/onp/note-politique-2.pdf",
+    apercu: "/documents/onp/apercus/note-politique-2.jpg",
     poidsKo: 1005,
   },
   {
@@ -70,6 +74,7 @@ export const PUBLICATIONS: Publication[] = [
     resume:
       "L'arrivée des jeunes générations sur le marché du travail et les conditions de leur insertion.",
     fichier: "/documents/onp/note-politique-3.pdf",
+    apercu: "/documents/onp/apercus/note-politique-3.jpg",
     poidsKo: 755,
   },
   {
@@ -79,6 +84,7 @@ export const PUBLICATIONS: Publication[] = [
     resume:
       "Le rôle des inégalités entre les femmes et les hommes dans la capture du dividende démographique.",
     fichier: "/documents/onp/note-politique-4.pdf",
+    apercu: "/documents/onp/apercus/note-politique-4.jpg",
     poidsKo: 989,
   },
   {
@@ -89,6 +95,7 @@ export const PUBLICATIONS: Publication[] = [
     resume:
       "Charges de dépendance, épargne et capacité d'investissement des ménages et de l'État.",
     fichier: "/documents/onp/note-politique-5.pdf",
+    apercu: "/documents/onp/apercus/note-politique-5.jpg",
     poidsKo: 798,
   },
   {
@@ -98,6 +105,7 @@ export const PUBLICATIONS: Publication[] = [
     resume:
       "Les écarts de situation démographique et sociale entre les territoires du pays.",
     fichier: "/documents/onp/note-politique-6.pdf",
+    apercu: "/documents/onp/apercus/note-politique-6.jpg",
     poidsKo: 2040,
   },
   {
@@ -108,6 +116,7 @@ export const PUBLICATIONS: Publication[] = [
     resume:
       "Brochure de présentation des comptes nationaux de transfert, qui mesurent comment les ressources circulent entre les générations.",
     fichier: "/documents/onp/comptes-nationaux-transfert.pdf",
+    apercu: "/documents/onp/apercus/comptes-nationaux-transfert.jpg",
     poidsKo: 1283,
     annee: 2016,
   },
@@ -119,6 +128,7 @@ export const PUBLICATIONS: Publication[] = [
     resume:
       "Étude des privations cumulées touchant les enfants, au-delà de la seule mesure monétaire de la pauvreté.",
     fichier: "/documents/onp/privations-multiples-enfants.pdf",
+    apercu: "/documents/onp/apercus/privations-multiples-enfants.jpg",
     poidsKo: 6480,
   },
   {
@@ -129,6 +139,7 @@ export const PUBLICATIONS: Publication[] = [
     resume:
       "Profil national établi selon le cadre des indicateurs de gouvernance des migrations.",
     fichier: "/documents/onp/profil-gouvernance-migrations-2019.pdf",
+    apercu: "/documents/onp/apercus/profil-gouvernance-migrations-2019.jpg",
     poidsKo: 1663,
     annee: 2019,
   },

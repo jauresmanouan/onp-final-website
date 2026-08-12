@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Download, FileText } from "lucide-react";
+import Image from "next/image";
+import { Download } from "lucide-react";
 import PageHeader from "@/components/site/PageHeader";
 import { getPublicationsParCategorie } from "@/lib/content";
 
@@ -28,7 +29,7 @@ export default async function PublicationsPage() {
         chapeau={`Les ${total} documents publiés par l'Office, en téléchargement libre : notes de politique sur le dividende démographique, études de fond et rapports institutionnels.`}
       />
 
-      <div className="mx-auto max-w-5xl px-6 lg:px-10 py-16 lg:py-20 space-y-16">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16 lg:py-20 space-y-16">
         {groupes.map((groupe) => (
           <section key={groupe.categorie} aria-labelledby={`cat-${groupe.categorie}`}>
             <h2
@@ -37,39 +38,51 @@ export default async function PublicationsPage() {
             >
               {groupe.label}
             </h2>
-            <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
+            <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
               {groupe.description}
             </p>
 
-            <ul className="mt-7 divide-y divide-border overflow-hidden rounded-xl border border-border">
+            <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {groupe.publications.map((p) => (
                 <li key={p.slug}>
-                  {/* Le lien porte le document entier : toute la ligne est cliquable */}
+                  {/* Toute la carte télécharge : la couverture est le lien */}
                   <a
                     href={p.fichier}
                     download
-                    className="group flex items-start gap-4 bg-card p-5 transition-colors hover:bg-muted/50"
+                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-lg"
                   >
-                    <FileText
-                      className="mt-0.5 size-5 shrink-0 text-primary"
-                      aria-hidden="true"
-                    />
-                    <span className="min-w-0 flex-1">
-                      <span className="block font-medium leading-snug group-hover:text-primary transition-colors">
-                        {p.titre}
-                      </span>
-                      <span className="mt-1.5 block text-sm leading-relaxed text-muted-foreground">
-                        {p.resume}
-                      </span>
-                      <span className="mt-2 block text-xs text-muted-foreground">
+                    {/* Ratio A4, comme la page rendue : la couverture entre
+                     * entière dans le cadre, sans recadrage. */}
+                    <div className="relative aspect-[1/1.414] overflow-hidden bg-muted">
+                      <Image
+                        src={p.apercu}
+                        alt={`Couverture de « ${p.titre} »`}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                      <span className="absolute right-3 top-3 rounded-md bg-background/90 px-2 py-1 text-[11px] font-semibold backdrop-blur">
                         PDF · {poids(p.poidsKo)}
-                        {p.annee ? ` · ${p.annee}` : ""}
                       </span>
-                    </span>
-                    <span className="flex items-center gap-1.5 self-center rounded-lg border border-border px-3 py-2 text-xs font-medium transition-colors group-hover:border-primary group-hover:text-primary">
-                      <Download className="size-3.5" aria-hidden="true" />
-                      <span className="sr-only sm:not-sr-only">Télécharger</span>
-                    </span>
+                    </div>
+
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3 className="font-semibold leading-snug group-hover:text-primary transition-colors">
+                        {p.titre}
+                      </h3>
+                      <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
+                        {p.resume}
+                      </p>
+                      <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                        <Download className="size-4" aria-hidden="true" />
+                        Télécharger
+                        {p.annee ? (
+                          <span className="font-normal text-muted-foreground">
+                            · {p.annee}
+                          </span>
+                        ) : null}
+                      </span>
+                    </div>
                   </a>
                 </li>
               ))}
