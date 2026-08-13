@@ -32,6 +32,7 @@ import {
 import { CHART_COLORS } from "@/components/charts/chartColors";
 import ChartTooltip from "@/components/charts/ChartTooltip";
 import IndicatorInfoButton from "@/components/dashboard/onp/IndicatorInfoButton";
+import FigureGrandEcran from "@/components/dashboard/onp/FigureGrandEcran";
 
 export default function DistrictsTab() {
   const { data, isLoading } = useCSV<DistrictRow>(
@@ -75,7 +76,9 @@ export default function DistrictsTab() {
           <DownloadCSVButton csvFile="/data/onp/districts_snapshot_2021.csv" />
         }
       >
-        <DistrictChoropleth />
+        <FigureGrandEcran quoi="La carte des districts">
+          <DistrictChoropleth />
+        </FigureGrandEcran>
       </ChartCard>
 
       <ChartCard
@@ -95,7 +98,7 @@ export default function DistrictsTab() {
                 setBarIndicator(v as DistrictIndicatorKey)
               }
             >
-              <SelectTrigger className="h-8 w-[220px] text-sm">
+              <SelectTrigger className="h-8 min-w-0 w-full sm:w-[220px] text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -110,55 +113,57 @@ export default function DistrictsTab() {
           </>
         }
       >
-        <ResponsiveContainer width="100%" height={360}>
-          <BarChart
-            data={ranked}
-            layout="vertical"
-            margin={{ top: 8, right: 16, left: 8, bottom: 4 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke={CHART_COLORS.grid}
-              strokeOpacity={0.25}
-              horizontal={false}
-            />
-            <XAxis
-              type="number"
-              stroke={CHART_COLORS.axis}
-              fontSize={11}
-              tickLine={false}
-              axisLine={{ stroke: CHART_COLORS.grid, strokeOpacity: 0.4 }}
-              tickFormatter={(v) =>
-                isCount ? `${(v / 1000).toFixed(0)}K` : v.toFixed(2)
-              }
-            />
-            <YAxis
-              type="category"
-              dataKey="district"
-              stroke={CHART_COLORS.axis}
-              fontSize={11}
-              tickLine={false}
-              axisLine={false}
-              width={120}
-            />
-            <Tooltip
-              content={
-                <ChartTooltip
-                  valueFormatter={(v) =>
-                    isCount ? formatFrench(v) : v.toFixed(3)
-                  }
-                />
-              }
-              cursor={{ fill: CHART_COLORS.grid, fillOpacity: 0.08 }}
-            />
-            <Bar
-              dataKey="value"
-              name={barCurrent.label}
-              fill={CHART_COLORS.hommes}
-              radius={[0, 4, 4, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <FigureGrandEcran quoi="Ce classement par district">
+          <ResponsiveContainer width="100%" height={360}>
+            <BarChart
+              data={ranked}
+              layout="vertical"
+              margin={{ top: 8, right: 16, left: 8, bottom: 4 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke={CHART_COLORS.grid}
+                strokeOpacity={0.25}
+                horizontal={false}
+              />
+              <XAxis
+                type="number"
+                stroke={CHART_COLORS.axis}
+                fontSize={11}
+                tickLine={false}
+                axisLine={{ stroke: CHART_COLORS.grid, strokeOpacity: 0.4 }}
+                tickFormatter={(v) =>
+                  isCount ? `${(v / 1000).toFixed(0)}K` : v.toFixed(2)
+                }
+              />
+              <YAxis
+                type="category"
+                dataKey="district"
+                stroke={CHART_COLORS.axis}
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                width={120}
+              />
+              <Tooltip
+                content={
+                  <ChartTooltip
+                    valueFormatter={(v) =>
+                      isCount ? formatFrench(v) : v.toFixed(3)
+                    }
+                  />
+                }
+                cursor={{ fill: CHART_COLORS.grid, fillOpacity: 0.08 }}
+              />
+              <Bar
+                dataKey="value"
+                name={barCurrent.label}
+                fill={CHART_COLORS.hommes}
+                radius={[0, 4, 4, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </FigureGrandEcran>
       </ChartCard>
 
       <Card className="bg-tile text-tile-foreground border border-tile-border shadow-md hover:shadow-lg transition-shadow ring-1 ring-black/[0.02] dark:ring-white/[0.03]">
@@ -177,74 +182,76 @@ export default function DistrictsTab() {
             </div>
             <DownloadCSVButton csvFile="/data/onp/districts_snapshot_2021.csv" />
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-muted/30">
-                  <Th>District</Th>
-                  <Th align="right">Population</Th>
-                  <Th align="right">Dép. éco.</Th>
-                  <Th align="right">Cadre de vie</Th>
-                  <Th align="right">Pauvreté</Th>
-                  <Th align="right">Capital hum.</Th>
-                  <Th align="right">Territoires</Th>
-                  <Th align="right">Dividende dém.</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  /* Autant de lignes vides que de districts : une seule ligne
-                   * « Chargement… » repliait le tableau, et la page sautait
-                   * quand les données arrivaient. */
-                  Array.from({ length: 14 }, (_, i) => (
-                    <tr key={i} className="border-b border-border/60">
-                      {Array.from({ length: 8 }, (_, c) => (
-                        <td key={c} className="py-2.5 px-4">
-                          <span
-                            className="block h-3 rounded bg-muted/50 animate-pulse"
-                            style={{ width: c === 0 ? "10rem" : "2.5rem" }}
-                          />
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                ) : (
-                  data.map((row) => {
-                    const isNational = row.district === "National";
-                    return (
-                      <tr
-                        key={row.district}
-                        className="border-b border-border/60 hover:bg-muted/40"
-                      >
-                        <td className="py-2.5 px-4 text-foreground font-medium">
-                          {row.district}
-                        </td>
-                        <Td align="right">
-                          {formatFrench(parseNumber(row.population) ?? 0)}
-                        </Td>
-                        {SCORE_COLS.map((col) => (
-                          <Td
-                            key={col}
-                            align="right"
-                            extreme={
-                              isNational
-                                ? undefined
-                                : extremeOf(
-                                    parseNumber(row[col]),
-                                    extremes[col],
-                                  )
-                            }
-                          >
-                            {formatScore(row[col])}
-                          </Td>
+          <FigureGrandEcran quoi="Ce tableau à huit colonnes" className="m-5">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted/30">
+                    <Th>District</Th>
+                    <Th align="right">Population</Th>
+                    <Th align="right">Dép. éco.</Th>
+                    <Th align="right">Cadre de vie</Th>
+                    <Th align="right">Pauvreté</Th>
+                    <Th align="right">Capital hum.</Th>
+                    <Th align="right">Territoires</Th>
+                    <Th align="right">Dividende dém.</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading ? (
+                    /* Autant de lignes vides que de districts : une seule ligne
+                     * « Chargement… » repliait le tableau, et la page sautait
+                     * quand les données arrivaient. */
+                    Array.from({ length: 14 }, (_, i) => (
+                      <tr key={i} className="border-b border-border/60">
+                        {Array.from({ length: 8 }, (_, c) => (
+                          <td key={c} className="py-2.5 px-4">
+                            <span
+                              className="block h-3 rounded bg-muted/50 animate-pulse"
+                              style={{ width: c === 0 ? "10rem" : "2.5rem" }}
+                            />
+                          </td>
                         ))}
                       </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                    ))
+                  ) : (
+                    data.map((row) => {
+                      const isNational = row.district === "National";
+                      return (
+                        <tr
+                          key={row.district}
+                          className="border-b border-border/60 hover:bg-muted/40"
+                        >
+                          <td className="py-2.5 px-4 text-foreground font-medium">
+                            {row.district}
+                          </td>
+                          <Td align="right">
+                            {formatFrench(parseNumber(row.population) ?? 0)}
+                          </Td>
+                          {SCORE_COLS.map((col) => (
+                            <Td
+                              key={col}
+                              align="right"
+                              extreme={
+                                isNational
+                                  ? undefined
+                                  : extremeOf(
+                                      parseNumber(row[col]),
+                                      extremes[col],
+                                    )
+                              }
+                            >
+                              {formatScore(row[col])}
+                            </Td>
+                          ))}
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </FigureGrandEcran>
         </CardContent>
       </Card>
     </>

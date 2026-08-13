@@ -95,7 +95,7 @@ export default function DistrictChoropleth() {
             value={indicator}
             onValueChange={(v) => setIndicator(v as DistrictIndicatorKey)}
           >
-            <SelectTrigger className="h-8 w-[260px] text-sm bg-tile text-tile-foreground border-tile-border">
+            <SelectTrigger className="h-8 min-w-0 w-full sm:w-[260px] text-sm bg-tile text-tile-foreground border-tile-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -116,7 +116,7 @@ export default function DistrictChoropleth() {
             Couleurs
           </span>
           <Select value={paletteId} onValueChange={setPaletteId}>
-            <SelectTrigger className="h-8 w-[220px] text-sm bg-tile text-tile-foreground border-tile-border">
+            <SelectTrigger className="h-8 min-w-0 w-full sm:w-[220px] text-sm bg-tile text-tile-foreground border-tile-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

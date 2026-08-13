@@ -103,7 +103,7 @@ export default function PopulationView() {
         actions={
           <>
             <Select value={selectedRgph} onValueChange={setSelectedRgph}>
-              <SelectTrigger className="h-8 text-xs w-[140px]">
+              <SelectTrigger className="h-8 text-xs min-w-0 w-full sm:w-[140px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

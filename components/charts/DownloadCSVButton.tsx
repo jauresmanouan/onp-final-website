@@ -31,10 +31,13 @@ export default function DownloadCSVButton({
       type="button"
       onClick={handleDownload}
       aria-label="Télécharger les données au format CSV"
-      className="inline-flex items-center gap-1.5 h-7 px-2 text-xs font-medium text-tile-foreground border border-tile-border rounded-md cursor-pointer transition-colors hover:border-tile-foreground/50 hover:bg-tile-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+      className="inline-flex shrink-0 items-center gap-1.5 h-7 px-2 text-xs font-medium text-tile-foreground border border-tile-border rounded-md cursor-pointer transition-colors hover:border-tile-foreground/50 hover:bg-tile-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
     >
       <Download className="h-3.5 w-3.5" />
-      {compact ? "CSV" : "Télécharger"}
+      {/* Sur téléphone, le sigle suffit : le libellé entier disputait sa place
+       * au sélecteur d'indicateur posé à côté. */}
+      <span className={compact ? undefined : "sm:hidden"}>CSV</span>
+      {!compact && <span className="hidden sm:inline">Télécharger</span>}
     </button>
   );
 }

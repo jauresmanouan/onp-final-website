@@ -59,8 +59,11 @@ export default function SiteHeader() {
               className="h-12 w-auto shrink-0 object-contain"
             />
             <span className="flex flex-col leading-tight min-w-0">
+              {/* Le nom entier ne tient pas sur un téléphone à côté du logo,
+               * du thème et du menu : le sigle prend le relais. */}
               <span className="font-display font-bold tracking-tight truncate">
-                {IDENTITE.nom}
+                <span className="sm:hidden">{IDENTITE.sigle}</span>
+                <span className="hidden sm:inline">{IDENTITE.nom}</span>
               </span>
               <span className="text-[11px] text-muted-foreground truncate">
                 République de Côte d&apos;Ivoire

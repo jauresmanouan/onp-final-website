@@ -13,9 +13,9 @@ export default function ONPHeader() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-      <div className="max-w-7xl mx-auto px-6 lg:px-20 xl:px-40 h-14 grid grid-cols-3 items-center">
+      <div className="max-w-7xl mx-auto px-6 lg:px-20 xl:px-40 h-14 flex items-center justify-between gap-3 md:grid md:grid-cols-3">
         {/* Gauche - Logo + nom */}
-        <Link href="/" className="flex items-center gap-2.5 justify-self-start">
+        <Link href="/" className="flex items-center gap-2.5 min-w-0 justify-self-start">
           <Image
             src="/onp_logo_vf.png"
             alt="Logo de l'Office National de la Population"
@@ -24,9 +24,14 @@ export default function ONPHeader() {
             priority
             className="h-12 w-auto rounded-md object-contain"
           />
-          <div className="flex flex-col leading-tight">
-            <span className="font-display font-semibold text-sm">
-              Office National de la Population
+          {/* Sur téléphone, le nom entier déborde la barre : le sigle prend le
+           * relais, le nom complet revient dès qu'il y a la place. */}
+          <div className="flex flex-col leading-tight min-w-0">
+            <span className="font-display font-semibold text-sm truncate">
+              <span className="sm:hidden">ONP</span>
+              <span className="hidden sm:inline">
+                Office National de la Population
+              </span>
             </span>
             {/* <span className="text-[10px] text-muted-foreground hidden sm:inline">
               Observatoire Gouvernemental des Données de Population et du

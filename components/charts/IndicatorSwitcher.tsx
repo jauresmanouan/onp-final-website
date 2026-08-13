@@ -88,7 +88,7 @@ export default function IndicatorSwitcher({
       actions={
         <>
           <Select value={selectedId} onValueChange={setSelectedId}>
-            <SelectTrigger className="h-8 text-xs w-[200px]">
+            <SelectTrigger className="h-8 text-xs min-w-0 w-full sm:w-[200px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

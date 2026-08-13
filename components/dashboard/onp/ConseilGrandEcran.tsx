@@ -52,9 +52,10 @@ export default function ConseilGrandEcran() {
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold">Mieux sur grand écran</p>
         <p className="mt-1 text-sm leading-relaxed text-tile-muted">
-          Les cartes des districts et les graphiques comparatifs se lisent
-          entièrement sur un ordinateur. Vous pouvez consulter cette page ici,
-          mais elle donne davantage sur un écran large.
+          Les indicateurs, les séries et les tendances s&apos;affichent ici.
+          Quelques figures demandent plus de largeur — la carte des districts,
+          les classements, le tableau de synthèse : tournez votre téléphone en
+          mode paysage, ou ouvrez cette page sur un écran plus grand.
         </p>
       </div>
 

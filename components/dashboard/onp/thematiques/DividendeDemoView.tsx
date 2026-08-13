@@ -7,6 +7,7 @@ import ChartCard from "@/components/charts/ChartCard";
 import IndicatorSwitcher from "@/components/charts/IndicatorSwitcher";
 import DownloadCSVButton from "@/components/charts/DownloadCSVButton";
 import ChartTooltip from "@/components/charts/ChartTooltip";
+import FigureGrandEcran from "@/components/dashboard/onp/FigureGrandEcran";
 import { useCSV } from "@/components/charts/useCSV";
 import { parseNumber } from "@/components/charts/transformCSV";
 import { CHART_COLORS } from "@/components/charts/chartColors";
@@ -173,62 +174,64 @@ function IndicateursNationauxSynthetiques() {
         <DownloadCSVButton csvFile="/data/onp/indicateurs_national_diag.csv" />
       }
     >
-      {isLoading || chartData.length === 0 ? (
-        <div className="h-[340px] bg-muted/30 rounded animate-pulse" />
-      ) : (
-        <ResponsiveContainer width="100%" height={340}>
-          <BarChart
-            data={chartData}
-            margin={{ top: 8, right: 16, left: 0, bottom: 60 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke={CHART_COLORS.grid}
-              strokeOpacity={0.3}
-              vertical={false}
-            />
-            <XAxis
-              dataKey="x"
-              stroke={CHART_COLORS.axis}
-              fontSize={11}
-              tickLine={false}
-              axisLine={{ stroke: CHART_COLORS.grid, strokeOpacity: 0.4 }}
-              angle={-25}
-              textAnchor="end"
-              interval={0}
-              height={60}
-            />
-            <YAxis
-              stroke={CHART_COLORS.axis}
-              fontSize={11}
-              tickLine={false}
-              axisLine={false}
-              domain={[0, "dataMax + 0.1"]}
-            />
-            <Tooltip
-              content={<ChartTooltip valueFormatter={(v) => v.toFixed(3)} />}
-              cursor={{ fill: CHART_COLORS.grid, fillOpacity: 0.1 }}
-            />
-            <Legend
-              iconType="square"
-              iconSize={10}
-              wrapperStyle={{ fontSize: 12, paddingBottom: 8 }}
-              align="left"
-              verticalAlign="top"
-            />
-            <Bar
-              dataKey="2015–2017"
-              fill={CHART_COLORS.adultes}
-              radius={[4, 4, 0, 0]}
-            />
-            <Bar
-              dataKey="2018–2020"
-              fill={CHART_COLORS.hommes}
-              radius={[4, 4, 0, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      )}
+      <FigureGrandEcran quoi="Ces cinq piliers comparés">
+        {isLoading || chartData.length === 0 ? (
+          <div className="h-[340px] bg-muted/30 rounded animate-pulse" />
+        ) : (
+          <ResponsiveContainer width="100%" height={340}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 8, right: 16, left: 0, bottom: 60 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke={CHART_COLORS.grid}
+                strokeOpacity={0.3}
+                vertical={false}
+              />
+              <XAxis
+                dataKey="x"
+                stroke={CHART_COLORS.axis}
+                fontSize={11}
+                tickLine={false}
+                axisLine={{ stroke: CHART_COLORS.grid, strokeOpacity: 0.4 }}
+                angle={-25}
+                textAnchor="end"
+                interval={0}
+                height={60}
+              />
+              <YAxis
+                stroke={CHART_COLORS.axis}
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                domain={[0, "dataMax + 0.1"]}
+              />
+              <Tooltip
+                content={<ChartTooltip valueFormatter={(v) => v.toFixed(3)} />}
+                cursor={{ fill: CHART_COLORS.grid, fillOpacity: 0.1 }}
+              />
+              <Legend
+                iconType="square"
+                iconSize={10}
+                wrapperStyle={{ fontSize: 12, paddingBottom: 8 }}
+                align="left"
+                verticalAlign="top"
+              />
+              <Bar
+                dataKey="2015–2017"
+                fill={CHART_COLORS.adultes}
+                radius={[4, 4, 0, 0]}
+              />
+              <Bar
+                dataKey="2018–2020"
+                fill={CHART_COLORS.hommes}
+                radius={[4, 4, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </FigureGrandEcran>
     </ChartCard>
   );
 }
@@ -291,7 +294,7 @@ function ClassementDistricts() {
       actions={
         <>
           <Select value={selectedIndex} onValueChange={setSelectedIndex}>
-            <SelectTrigger className="h-8 text-xs w-[260px]">
+            <SelectTrigger className="h-8 text-xs min-w-0 w-full sm:w-[260px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -310,52 +313,54 @@ function ClassementDistricts() {
         </>
       }
     >
-      {isLoading || ranking.length === 0 ? (
-        <div className="h-[420px] bg-muted/30 rounded animate-pulse" />
-      ) : (
-        <ResponsiveContainer width="100%" height={420}>
-          <BarChart
-            data={ranking}
-            layout="vertical"
-            margin={{ top: 8, right: 24, left: 8, bottom: 4 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke={CHART_COLORS.grid}
-              strokeOpacity={0.25}
-              horizontal={false}
-            />
-            <XAxis
-              type="number"
-              domain={[0, 1]}
-              stroke={CHART_COLORS.axis}
-              fontSize={11}
-              tickLine={false}
-              axisLine={{ stroke: CHART_COLORS.grid, strokeOpacity: 0.4 }}
-              tickFormatter={(v) => v.toFixed(1)}
-            />
-            <YAxis
-              type="category"
-              dataKey="district"
-              stroke={CHART_COLORS.axis}
-              fontSize={11}
-              tickLine={false}
-              axisLine={false}
-              width={130}
-            />
-            <Tooltip
-              content={<ChartTooltip valueFormatter={(v) => v.toFixed(3)} />}
-              cursor={{ fill: CHART_COLORS.grid, fillOpacity: 0.08 }}
-            />
-            <Bar
-              dataKey="value"
-              name={current.value}
-              fill={CHART_COLORS.hommes}
-              radius={[0, 4, 4, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      )}
+      <FigureGrandEcran quoi="Ce classement par district">
+        {isLoading || ranking.length === 0 ? (
+          <div className="h-[420px] bg-muted/30 rounded animate-pulse" />
+        ) : (
+          <ResponsiveContainer width="100%" height={420}>
+            <BarChart
+              data={ranking}
+              layout="vertical"
+              margin={{ top: 8, right: 24, left: 8, bottom: 4 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke={CHART_COLORS.grid}
+                strokeOpacity={0.25}
+                horizontal={false}
+              />
+              <XAxis
+                type="number"
+                domain={[0, 1]}
+                stroke={CHART_COLORS.axis}
+                fontSize={11}
+                tickLine={false}
+                axisLine={{ stroke: CHART_COLORS.grid, strokeOpacity: 0.4 }}
+                tickFormatter={(v) => v.toFixed(1)}
+              />
+              <YAxis
+                type="category"
+                dataKey="district"
+                stroke={CHART_COLORS.axis}
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                width={130}
+              />
+              <Tooltip
+                content={<ChartTooltip valueFormatter={(v) => v.toFixed(3)} />}
+                cursor={{ fill: CHART_COLORS.grid, fillOpacity: 0.08 }}
+              />
+              <Bar
+                dataKey="value"
+                name={current.value}
+                fill={CHART_COLORS.hommes}
+                radius={[0, 4, 4, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </FigureGrandEcran>
     </ChartCard>
   );
 }

@@ -116,7 +116,10 @@ export default function ONPDashboard() {
           onValueChange={(v) => setActiveTab(v as TabValue)}
           className="space-y-6"
         >
-          <TabsList className="h-9 gap-1 bg-panel text-panel-foreground">
+          {/* Sur téléphone les trois onglets et le nom de la thématique
+            * dépassent la largeur : la barre défile plutôt que de pousser la
+            * page à défiler de côté. */}
+          <TabsList className="h-9 gap-1 bg-panel text-panel-foreground max-w-full justify-start overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <TabsTrigger
               value="vue-ensemble"
               className="text-xs text-panel-foreground data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
@@ -140,7 +143,7 @@ export default function ONPDashboard() {
                 >
                   Thématiques
                   {currentThematique && (
-                    <span className="opacity-80">
+                    <span className="hidden sm:inline opacity-80">
                       · {currentThematique.label}
                     </span>
                   )}
