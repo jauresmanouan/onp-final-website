@@ -159,7 +159,10 @@ async function Ouverture() {
       </dl>
 
       <div className="mt-12 flex flex-col gap-3 sm:flex-row">
-        <BoutonLien href="/dashboard">
+        <BoutonLien
+          href="/dashboard"
+          libelleChargement="Chargement des données…"
+        >
           Consulter les chiffres
         </BoutonLien>
       </div>
@@ -384,7 +387,11 @@ function BanqueDeDonnees() {
                 cartographie par district. Les séries sont consultables en ligne
                 et téléchargeables au format CSV pour vos propres analyses.
               </p>
-              <BoutonLien href="/dashboard" className="mt-8">
+              <BoutonLien
+                href="/dashboard"
+                libelleChargement="Chargement des données…"
+                className="mt-8"
+              >
                 Ouvrir la banque de données
               </BoutonLien>
             </div>

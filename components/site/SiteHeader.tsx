@@ -90,6 +90,7 @@ export default function SiteHeader() {
             <BoutonLien
               href="/dashboard"
               variante="primary"
+              libelleChargement="Chargement…"
               className="hidden sm:inline-flex"
             >
               Nos chiffres
@@ -132,6 +133,7 @@ export default function SiteHeader() {
           <BoutonLien
             href="/dashboard"
             variante="primary"
+            libelleChargement="Chargement…"
             className="mt-2 flex w-full py-2.5"
           >
             Tableau de bord

@@ -46,11 +46,13 @@ function SqueletteCarte({
 
 /** Bande de KPI : même gabarit que KPICarousel + KPICard. */
 function SqueletteKPIs({ nombre }: { nombre: number }) {
+  const largeurItem = 240;
+
   return (
     <div className="relative animate-pulse">
       <div className="flex gap-4 overflow-hidden pb-1">
         {Array.from({ length: nombre }, (_, i) => (
-          <div key={i} className="min-w-0" style={{ flex: "1 0 240px" }}>
+          <div key={i} className="min-w-0" style={{ flex: `1 0 ${largeurItem}px` }}>
             <Card className={CARTE}>
               <CardContent>
                 <Bloc className="mb-2 h-4 w-28" />

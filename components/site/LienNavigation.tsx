@@ -55,6 +55,48 @@ export function Indicateur({ icone }: { icone: Icone }) {
   );
 }
 
+/**
+ * Libellé du bouton pendant la navigation.
+ *
+ * L'anneau seul dit qu'il se passe quelque chose, pas ce qui se passe. Sur les
+ * pages lourdes — le tableau de bord et ses séries — l'attente se compte en
+ * secondes : le bouton l'annonce en toutes lettres. Les deux libellés sont
+ * superposés dans la même case de grille, si bien que le bouton garde la
+ * largeur du plus long des deux : il ne se déforme pas sous le curseur au
+ * moment du clic.
+ */
+function LibelleBouton({
+  children,
+  libelleChargement,
+}: {
+  children: React.ReactNode;
+  libelleChargement: string;
+}) {
+  const { pending } = useLinkStatus();
+
+  return (
+    <span className="relative inline-grid place-items-center">
+      <span
+        className={cn(
+          "col-start-1 row-start-1 transition-opacity duration-200",
+          pending ? "opacity-0" : "opacity-100"
+        )}
+      >
+        {children}
+      </span>
+      <span
+        aria-hidden={!pending}
+        className={cn(
+          "col-start-1 row-start-1 whitespace-nowrap transition-opacity duration-200",
+          pending ? "opacity-100" : "opacity-0"
+        )}
+      >
+        {libelleChargement}
+      </span>
+    </span>
+  );
+}
+
 const VARIANTES = {
   accent:
     "rounded-lg bg-accent px-6 py-3.5 text-sm font-semibold text-accent-foreground transition-transform hover:scale-[1.02]",
@@ -72,12 +114,15 @@ export function BoutonLien({
   // Flèche droite par défaut : la flèche inclinée annonce une sortie du site,
   // or la banque de données en fait partie.
   icone = "fleche",
+  /** Libellé affiché pendant la navigation, pour les destinations lentes. */
+  libelleChargement,
   className,
 }: {
   href: string;
   children: React.ReactNode;
   variante?: keyof typeof VARIANTES;
   icone?: Icone;
+  libelleChargement?: string;
   className?: string;
 }) {
   return (
@@ -89,7 +134,13 @@ export function BoutonLien({
         className
       )}
     >
-      {children}
+      {libelleChargement ? (
+        <LibelleBouton libelleChargement={libelleChargement}>
+          {children}
+        </LibelleBouton>
+      ) : (
+        children
+      )}
       <Indicateur icone={icone} />
     </Link>
   );
