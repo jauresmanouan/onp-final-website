@@ -17,6 +17,10 @@ const ACCENTS = {
  * Le rendu est différé au montage : marqué comme fermé côté client, il
  * apparaîtrait puis disparaîtrait sous les yeux du visiteur si le serveur
  * l'avait déjà écrit dans la page.
+ *
+ * La fermeture vaut pour la visite en cours, pas au-delà : stockée
+ * durablement, elle enterrait le bandeau pour toujours, et une annonce
+ * suivante ne se voyait qu'en changeant son identifiant.
  */
 export default function BandeauAnnonce({ annonce }: { annonce: Annonce }) {
   const cle = `annonce-fermee:${annonce.id}`;
@@ -24,7 +28,10 @@ export default function BandeauAnnonce({ annonce }: { annonce: Annonce }) {
 
   useEffect(() => {
     try {
-      if (localStorage.getItem(cle) !== "1") setVisible(true);
+      // Purge de l'ancienne marque permanente, laissée par les versions
+      // précédentes chez les visiteurs qui avaient déjà fermé le bandeau.
+      localStorage.removeItem(cle);
+      if (sessionStorage.getItem(cle) !== "1") setVisible(true);
     } catch {
       // Navigation privée ou stockage refusé : on montre le bandeau
       setVisible(true);
@@ -34,7 +41,7 @@ export default function BandeauAnnonce({ annonce }: { annonce: Annonce }) {
   const fermer = () => {
     setVisible(false);
     try {
-      localStorage.setItem(cle, "1");
+      sessionStorage.setItem(cle, "1");
     } catch {
       // Sans stockage, le bandeau reviendra au prochain chargement
     }
