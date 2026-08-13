@@ -160,7 +160,7 @@ async function Ouverture() {
 
       <div className="mt-12 flex flex-col gap-3 sm:flex-row">
         <BoutonLien href="/dashboard">
-          Consulter le tableau de bord
+          Consulter les chiffres
         </BoutonLien>
       </div>
     </CadreOuverture>

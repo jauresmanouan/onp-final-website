@@ -92,7 +92,7 @@ export default function SiteHeader() {
               variante="primary"
               className="hidden sm:inline-flex"
             >
-              Banque de données
+              Nos chiffres
             </BoutonLien>
             <ThemeToggle />
             <button
