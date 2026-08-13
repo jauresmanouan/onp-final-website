@@ -56,10 +56,68 @@ function compose(n: number, m: Morceaux): string {
 }
 
 /**
- * Décélération marquée : la course est vive au départ et se traîne sur la fin,
- * si bien que les dernières unités se lisent une à une.
+ * Le chiffre est tiré vers sa valeur par un ressort critiquement amorti,
+ * plutôt que posé sur une courbe de durée fixe.
+ *
+ * Une courbe en puissance atteignait quatre-vingt-dix pour cent de la valeur
+ * dans le premier tiers du temps, puis se traînait : le nombre semblait figé
+ * et sautait d'un cran de loin en loin. Le ressort, lui, ralentit sans
+ * jamais s'arrêter, parce que sa vitesse décroît en même temps que la
+ * distance restante. C'est le mouvement que fait une porte à fermeture douce.
+ *
+ * Critiquement amorti, il ne dépasse jamais la valeur, ce qui compte ici :
+ * une population qui monte à 29,6 avant de redescendre à 29,4 serait un
+ * contresens sur une donnée publique.
  */
-const freine = (t: number) => 1 - Math.pow(1 - t, 5);
+type Ressort = { position: number; vitesse: number };
+
+/**
+ * Avance le ressort d'un pas de temps.
+ *
+ * `pulsation` fixe la vivacité : plus elle est haute, plus le chiffre rejoint
+ * vite sa valeur. Le pas est plafonné, un onglet remis au premier plan après
+ * une pause livrant un écart de plusieurs secondes qui ferait diverger le
+ * calcul.
+ */
+function avanceRessort(
+  r: Ressort,
+  cible: number,
+  pulsation: number,
+  pas: number
+): void {
+  const dt = Math.min(pas, 1 / 30);
+  const acceleration =
+    -2 * pulsation * r.vitesse - pulsation * pulsation * (r.position - cible);
+  r.vitesse += acceleration * dt;
+  r.position += r.vitesse * dt;
+}
+
+/**
+ * Raideur à donner au ressort pour qu'il arrive au bout dans le temps voulu.
+ *
+ * Sans ce calcul, la raideur serait la même pour tous les chiffres et chacun
+ * se poserait à son heure : « 7 » a sept crans à parcourir, « 61,5 » en a six
+ * cent quinze, si bien que le premier finissait en une seconde quand le
+ * second en mettait deux et demie, les quatre mesures de l'ouverture arrivant
+ * en ordre dispersé.
+ *
+ * Un ressort critiquement amorti lâché sans vitesse laisse une distance
+ * (1 + u)·e^-u de sa course, u étant le produit de la pulsation par le temps.
+ * On cherche donc le u qui laisse exactement un cran d'affichage, puis on en
+ * déduit la pulsation. L'équation ne se renverse pas, mais elle décroît sans
+ * détour : vingt bissections suffisent à la résoudre au millième.
+ */
+function pulsationPour(course: number, cran: number, duree: number): number {
+  const reste = Math.min(cran / course, 0.9);
+  let bas = 0;
+  let haut = 40;
+  for (let i = 0; i < 20; i++) {
+    const u = (bas + haut) / 2;
+    if ((1 + u) * Math.exp(-u) > reste) bas = u;
+    else haut = u;
+  }
+  return ((bas + haut) / 2) / (duree / 1000);
+}
 
 // Appeler useLayoutEffect au rendu serveur déclenche un avertissement React.
 const useEffetAvantPeinture =
@@ -71,7 +129,11 @@ export default function ChiffreAnime({
   className,
 }: {
   valeur: string;
-  /** Durée de la montée, en millisecondes. */
+  /**
+   * Temps que met le chiffre à se poser, en millisecondes. La raideur du
+   * ressort en découle, si bien que deux chiffres d'ampleurs différentes
+   * arrivent ensemble.
+   */
   duree?: number;
   className?: string;
 }) {
@@ -98,13 +160,29 @@ export default function ChiffreAnime({
     if (!noeud) return;
 
     let image = 0;
-    let debut = 0;
+    let precedent = 0;
+    const r: Ressort = { position: 0, vitesse: 0 };
+
+    // Le dernier cran d'affichage est celui qui traîne : la vitesse y est si
+    // faible qu'il tenait l'écran un demi-tiers de seconde sans rien changer.
+    // On s'arrête un cran avant et on pose la valeur exacte.
+    const cran = Math.pow(10, -morceaux.decimales);
+    const pulsation = pulsationPour(morceaux.cible, cran, duree);
 
     const avance = (t: number) => {
-      if (!debut) debut = t;
-      const part = Math.min((t - debut) / duree, 1);
-      setAffiche(compose(morceaux.cible * freine(part), morceaux));
-      if (part < 1) image = requestAnimationFrame(avance);
+      if (!precedent) precedent = t;
+      const pas = (t - precedent) / 1000;
+      precedent = t;
+
+      avanceRessort(r, morceaux.cible, pulsation, pas);
+
+      const reste = Math.abs(morceaux.cible - r.position);
+      if (reste < cran) {
+        setAffiche(compose(morceaux.cible, morceaux));
+        return;
+      }
+      setAffiche(compose(r.position, morceaux));
+      image = requestAnimationFrame(avance);
     };
 
     // La montée n'a de sens que vue : lancée hors écran, elle serait finie
