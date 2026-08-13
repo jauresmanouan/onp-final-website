@@ -69,7 +69,9 @@ export function BoutonLien({
   href,
   children,
   variante = "accent",
-  icone = "externe",
+  // Flèche droite par défaut : la flèche inclinée annonce une sortie du site,
+  // or la banque de données en fait partie.
+  icone = "fleche",
   className,
 }: {
   href: string;
