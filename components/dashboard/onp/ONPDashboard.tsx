@@ -14,29 +14,27 @@ import { IndicatorInfoProvider } from "./IndicatorInfoContext";
 import IndicatorInfoPanel from "./IndicatorInfoPanel";
 import IndicatorPanelBridge from "./IndicatorPanelBridge";
 import ConseilGrandEcran from "./ConseilGrandEcran";
+import {
+  SqueletteDistricts,
+  SquelettePopulation,
+  SqueletteSante,
+  SqueletteDividende,
+} from "./SquelettesOnglets";
 
-const TabFallback = () => (
-  <div className="space-y-4 animate-pulse">
-    <div className="h-8 w-64 bg-muted rounded" />
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="h-64 rounded-xl border border-border bg-card" />
-      <div className="h-64 rounded-xl border border-border bg-card" />
-    </div>
-  </div>
-);
-
+// Chaque onglet a son propre squelette, taillé à la hauteur de son contenu :
+// un gabarit générique plus court faisait sauter la page au chargement.
 const DistrictsTab = dynamic(() => import("./tabs/DistrictsTab"), {
-  loading: TabFallback,
+  loading: SqueletteDistricts,
 });
 const PopulationView = dynamic(() => import("./thematiques/PopulationView"), {
-  loading: TabFallback,
+  loading: SquelettePopulation,
 });
 const SanteView = dynamic(() => import("./thematiques/SanteView"), {
-  loading: TabFallback,
+  loading: SqueletteSante,
 });
 const DividendeDemoView = dynamic(
   () => import("./thematiques/DividendeDemoView"),
-  { loading: TabFallback },
+  { loading: SqueletteDividende },
 );
 
 const THEMATIQUES = [

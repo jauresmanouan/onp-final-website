@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import PageHeader from "@/components/site/PageHeader";
+import SommairePage from "@/components/site/SommairePage";
 import { getInstitution } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -41,29 +42,9 @@ export default async function OfficePage() {
 
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-[auto_1fr] lg:gap-16">
-          {/* Sommaire, collé en haut sur grand écran */}
-          <nav aria-label="Sommaire" className="lg:w-52">
-            {/* Le bloc entier reste collé, titre compris : seule la liste
-             * l'était, et l'intitulé « Sur cette page » disparaissait au
-             * premier défilement, laissant des liens sans en-tête. */}
-            <div className="lg:sticky lg:top-28">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Sur cette page
-              </p>
-              <ul className="mt-4 space-y-2.5">
-                {SOMMAIRE.map((s) => (
-                  <li key={s.id}>
-                    <a
-                      href={`#${s.id}`}
-                      className="text-sm text-foreground/75 hover:text-primary transition-colors"
-                    >
-                      {s.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </nav>
+          {/* Sommaire, collé en haut sur grand écran : il suit la descente et
+           * marque d'un tiret la section en cours de lecture. */}
+          <SommairePage entrees={SOMMAIRE} />
 
           <div className="min-w-0 max-w-3xl space-y-20">
             {/* ── Présentation ─────────────────────────────── */}

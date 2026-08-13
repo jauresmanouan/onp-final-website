@@ -193,14 +193,21 @@ export default function DistrictsTab() {
               </thead>
               <tbody>
                 {isLoading ? (
-                  <tr>
-                    <td
-                      colSpan={8}
-                      className="py-10 text-center text-xs text-muted-foreground"
-                    >
-                      Chargement…
-                    </td>
-                  </tr>
+                  /* Autant de lignes vides que de districts : une seule ligne
+                   * « Chargement… » repliait le tableau, et la page sautait
+                   * quand les données arrivaient. */
+                  Array.from({ length: 14 }, (_, i) => (
+                    <tr key={i} className="border-b border-border/60">
+                      {Array.from({ length: 8 }, (_, c) => (
+                        <td key={c} className="py-2.5 px-4">
+                          <span
+                            className="block h-3 rounded bg-muted/50 animate-pulse"
+                            style={{ width: c === 0 ? "10rem" : "2.5rem" }}
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  ))
                 ) : (
                   data.map((row) => {
                     const isNational = row.district === "National";

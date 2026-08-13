@@ -74,15 +74,9 @@ export default function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={estActif(item.href) ? "page" : undefined}
-                /* Un filet se déploie sous la rubrique, depuis la gauche, au
-                 * survol comme au clavier. Le fond seul apparaissait d'un
-                 * bloc ; le trait, lui, suit le geste. Au clavier il s'épaissit
-                 * : un cheveu d'un pixel ne suffit pas à dire où l'on est.
-                 * Le filet vient s'ajouter au contour du navigateur, il ne le
-                 * remplace pas. */
                 className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors after:absolute after:inset-x-3 after:bottom-1.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100 focus-visible:after:scale-x-100 focus-visible:after:h-0.5 motion-reduce:after:transition-none ${
                   estActif(item.href)
-                    ? "text-primary bg-primary/10"
+                    ? "text-primary after:scale-x-100 after:h-0.5"
                     : "text-foreground/80 hover:text-foreground focus-visible:text-foreground"
                 }`}
               >

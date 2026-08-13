@@ -39,6 +39,10 @@ const ENTETES = [
 ];
 
 const nextConfig: NextConfig = {
+  // Le dossier parent porte son propre pnpm-lock.yaml : sans cette ligne,
+  // Turbopack remonte jusqu'à lui et prend CartographieMETFPA pour la racine
+  // du projet. On la fixe ici, sur le dossier du site.
+  turbopack: { root: __dirname },
   async headers() {
     return [{ source: "/:chemin*", headers: ENTETES }];
   },
