@@ -4,7 +4,10 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="skeleton"
-      className={cn("bg-accent animate-pulse rounded-md", className)}
+      // `bg-accent` peignait les squelettes en orange vif, l'accent de la
+      // charte n'étant pas un gris neutre ici. La surface sourde est la seule
+      // qui se lit comme un contenu en attente.
+      className={cn("bg-muted animate-pulse rounded-md", className)}
       {...props}
     />
   )
