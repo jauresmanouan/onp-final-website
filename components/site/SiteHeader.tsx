@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/accueil/ThemeToggle";
 import { BoutonLien } from "@/components/site/LienNavigation";
+import BarreChargement from "@/components/site/BarreChargement";
 import { IDENTITE } from "@/content/site/institution";
 
 const NAV = [
@@ -80,6 +81,7 @@ export default function SiteHeader() {
                 }`}
               >
                 {item.label}
+                <BarreChargement />
               </Link>
             ))}
           </nav>
@@ -124,6 +126,7 @@ export default function SiteHeader() {
               }`}
             >
               {item.label}
+              <BarreChargement />
             </Link>
           ))}
           <BoutonLien

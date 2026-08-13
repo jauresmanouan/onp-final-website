@@ -227,6 +227,31 @@
   }
 }
 
+/* ── Filet de progression ────────────────────────────────────────
+ * Va-et-vient plutôt que remplissage : on ne connaît pas la durée du
+ * chargement, et une barre qui progresse vers un terme inventé ment sur ce
+ * qu'il reste à attendre.
+ */
+@keyframes filet-progression {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+.filet-progression {
+  animation: filet-progression 1.1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filet-progression {
+    animation: none;
+    width: 100%;
+  }
+}
+
 /* ── Bandeau d'information défilant ──────────────────────────────
  * Le contenu est rendu deux fois côte à côte ; la piste se décale d'une
  * moitié exactement, si bien que la seconde copie prend la place de la
