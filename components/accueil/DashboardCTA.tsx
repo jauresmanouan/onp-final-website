@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import Spinner from "@/components/ui/spinner";
 
 /**
  * Bouton d'accès au tableau de bord.
@@ -18,7 +19,7 @@ export default function DashboardCTA() {
       onClick={() => startTransition(() => router.push("/dashboard"))}
       disabled={isPending}
       aria-busy={isPending}
-      className="group relative inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-all duration-200 cursor-pointer disabled:cursor-wait disabled:hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-950"
+      className="group relative inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm transition-all duration-200 cursor-pointer disabled:cursor-wait disabled:hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <span className={isPending ? "opacity-90" : undefined}>
         {isPending ? "Ouverture du tableau de bord" : "Accéder au tableau de bord"}
@@ -46,14 +47,14 @@ export default function DashboardCTA() {
           <path d="m12 5 7 7-7 7" />
         </svg>
 
-        {/* Spinner : anneau à dégradé conique */}
+        {/* Spinner */}
         <span
           aria-hidden="true"
           className={`absolute inset-0 transition-all duration-200 ${
             isPending ? "opacity-100 scale-100" : "opacity-0 scale-75"
           }`}
         >
-          <span className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(255,255,255,0.18)_140deg,#ffffff_340deg,#ffffff_360deg)] animate-spin [mask:radial-gradient(farthest-side,transparent_calc(100%-2px),#000_calc(100%-2px))] [-webkit-mask:radial-gradient(farthest-side,transparent_calc(100%-2px),#000_calc(100%-2px))]" />
+          <Spinner className="size-4" />
         </span>
       </span>
     </button>

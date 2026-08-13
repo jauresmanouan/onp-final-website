@@ -64,9 +64,11 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.01 250);
 
-  /* green-500 */
-  --primary: oklch(0.723 0.219 149.579);
-  --primary-foreground: oklch(0.99 0.01 150);
+  /* emerald-800 : le vert de l'institution, celui du panneau du tableau de
+   * bord. Le green-500 d'origine passait mal en texte sur fond blanc, où il
+   * n'atteignait pas le contraste demandé pour un titre de rubrique. */
+  --primary: #065F46;
+  --primary-foreground: #ECFDF5;
 
   --secondary: oklch(0.97 0.005 250);
   --secondary-foreground: oklch(0.21 0.01 250);
@@ -82,7 +84,7 @@
 
   --border: oklch(0.92 0.008 250);
   --input: oklch(0.92 0.008 250);
-  --ring: oklch(0.723 0.219 149.579);
+  --ring: #065F46;
 
   --chart-1: oklch(0.723 0.219 149.579);  /* green */
   --chart-2: oklch(0.705 0.213 47.604);   /* orange */
@@ -111,12 +113,12 @@
 
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.18 0.01 250);
-  --sidebar-primary: oklch(0.723 0.219 149.579);
-  --sidebar-primary-foreground: oklch(0.99 0.01 150);
+  --sidebar-primary: #065F46;
+  --sidebar-primary-foreground: #ECFDF5;
   --sidebar-accent: oklch(0.97 0.005 250);
   --sidebar-accent-foreground: oklch(0.21 0.01 250);
   --sidebar-border: oklch(0.92 0.008 250);
-  --sidebar-ring: oklch(0.723 0.219 149.579);
+  --sidebar-ring: #065F46;
 }
 
 /* ── Dark theme ─────────────────────────────────────────────── */
@@ -130,9 +132,11 @@
   --popover: oklch(0.21 0.013 250);
   --popover-foreground: oklch(0.96 0.005 250);
 
-  /* green-500 (slightly lifted) */
-  --primary: oklch(0.74 0.2 149);
-  --primary-foreground: oklch(0.16 0.04 152);
+  /* Même vert, remonté en clarté : emerald-800 posé sur un fond sombre ne se
+   * lit plus, ni en texte ni en bouton. C'est emerald-400, la déclinaison
+   * nocturne de la couleur institutionnelle. */
+  --primary: #34D399;
+  --primary-foreground: #022C22;
 
   --secondary: oklch(0.27 0.012 250);
   --secondary-foreground: oklch(0.96 0.005 250);
@@ -148,7 +152,7 @@
 
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.74 0.2 149);
+  --ring: #34D399;
 
   --chart-1: oklch(0.74 0.2 149);
   --chart-2: oklch(0.72 0.21 48);
@@ -178,12 +182,12 @@
 
   --sidebar: oklch(0.21 0.013 250);
   --sidebar-foreground: oklch(0.96 0.005 250);
-  --sidebar-primary: oklch(0.74 0.2 149);
-  --sidebar-primary-foreground: oklch(0.16 0.04 152);
+  --sidebar-primary: #34D399;
+  --sidebar-primary-foreground: #022C22;
   --sidebar-accent: oklch(0.27 0.012 250);
   --sidebar-accent-foreground: oklch(0.96 0.005 250);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.74 0.2 149);
+  --sidebar-ring: #34D399;
 }
 
 @layer base {

@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-green-500 cursor-pointer text-white",
+          "bg-primary cursor-pointer text-primary-foreground hover:bg-primary/90",
         default:
           "bg-primary cursor-pointer text-primary-foreground shadow-xs hover:bg-primary/90",
         orange:
