@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import PageHeader from "@/components/site/PageHeader";
+import NouvelleFenetre from "@/components/site/NouvelleFenetre";
 import { getPartenaires, getLiensInstitutionnels } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -86,6 +87,7 @@ export default async function PartenairesPage() {
                 >
                   <span className="group-hover:text-primary transition-colors">
                     {l.nom}
+                    <NouvelleFenetre />
                   </span>
                   <ArrowUpRight
                     className="size-3.5 shrink-0 text-muted-foreground group-hover:text-primary transition-colors"

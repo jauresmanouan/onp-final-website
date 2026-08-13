@@ -43,21 +43,26 @@ export default async function OfficePage() {
         <div className="grid gap-12 lg:grid-cols-[auto_1fr] lg:gap-16">
           {/* Sommaire, collé en haut sur grand écran */}
           <nav aria-label="Sommaire" className="lg:w-52">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Sur cette page
-            </p>
-            <ul className="mt-4 space-y-2.5 lg:sticky lg:top-28">
-              {SOMMAIRE.map((s) => (
-                <li key={s.id}>
-                  <a
-                    href={`#${s.id}`}
-                    className="text-sm text-foreground/75 hover:text-primary transition-colors"
-                  >
-                    {s.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {/* Le bloc entier reste collé, titre compris : seule la liste
+             * l'était, et l'intitulé « Sur cette page » disparaissait au
+             * premier défilement, laissant des liens sans en-tête. */}
+            <div className="lg:sticky lg:top-28">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Sur cette page
+              </p>
+              <ul className="mt-4 space-y-2.5">
+                {SOMMAIRE.map((s) => (
+                  <li key={s.id}>
+                    <a
+                      href={`#${s.id}`}
+                      className="text-sm text-foreground/75 hover:text-primary transition-colors"
+                    >
+                      {s.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </nav>
 
           <div className="min-w-0 max-w-3xl space-y-20">

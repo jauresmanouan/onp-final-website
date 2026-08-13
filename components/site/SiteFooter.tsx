@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getInstitution, getLiensInstitutionnels } from "@/lib/content";
+import NouvelleFenetre from "@/components/site/NouvelleFenetre";
 
 const RUBRIQUES = [
   { href: "/office", label: "L'Office" },
@@ -77,6 +78,7 @@ export default async function SiteFooter() {
                     className="text-sm text-foreground/80 hover:text-primary transition-colors"
                   >
                     {l.nom}
+                    <NouvelleFenetre />
                   </a>
                 </li>
               ))}
@@ -96,6 +98,7 @@ export default async function SiteFooter() {
               className="text-xs text-muted-foreground hover:text-primary transition-colors"
             >
               Facebook
+              <NouvelleFenetre />
             </a>
             <a
               href={contact.twitter}
@@ -104,6 +107,7 @@ export default async function SiteFooter() {
               className="text-xs text-muted-foreground hover:text-primary transition-colors"
             >
               X
+              <NouvelleFenetre />
             </a>
           </div>
         </div>
