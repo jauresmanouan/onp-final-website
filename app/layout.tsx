@@ -35,7 +35,18 @@ export const viewport: Viewport = {
   ],
 };
 
-const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})();`;
+/**
+ * Script d'avant peinture.
+ *
+ * Il pose le thème, et signale que le JavaScript répond. Cette seconde
+ * marque sert aux chiffres de l'accueil : le serveur écrit leur valeur
+ * finale, pour qui lit sans script comme pour les moteurs, mais elle
+ * s'affichait pleine une demi-seconde avant que l'hydratation ne la remette
+ * à zéro pour la faire monter. La marque permet de la cacher d'ici là, sans
+ * la retirer de la page. Sans script, la classe n'arrive jamais et la valeur
+ * reste visible.
+ */
+const themeScript = `(function(){var r=document.documentElement;r.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches)){r.classList.add('dark')}}catch(e){}})();`;
 
 export default function RootLayout({
   children,

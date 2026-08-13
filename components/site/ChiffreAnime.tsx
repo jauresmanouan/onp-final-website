@@ -119,6 +119,15 @@ function pulsationPour(course: number, cran: number, duree: number): number {
   return ((bas + haut) / 2) / (duree / 1000);
 }
 
+/**
+ * Réglage du flou de mouvement, en em par unité de vitesse relative, et son
+ * plafond. Deux nombres à toucher pour l'accentuer ou l'effacer : au plafond,
+ * le grand chiffre de l'ouverture est flouté d'environ cinq pixels, les
+ * mesures du dessous d'un seul.
+ */
+const FLOU_FACTEUR = 0.024;
+const FLOU_MAX = 0.028;
+
 // Appeler useLayoutEffect au rendu serveur déclenche un avertissement React.
 const useEffetAvantPeinture =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
@@ -141,18 +150,29 @@ export default function ChiffreAnime({
   const ref = useRef<HTMLSpanElement>(null);
 
   // Le serveur écrit la valeur finale : elle doit être dans la page pour qui
-  // lit sans script, et pour les moteurs.
+  // lit sans script, et pour les moteurs. Tant que l'hydratation n'a pas eu
+  // lieu, elle est cachée par la feuille de style, faute de quoi elle
+  // s'affichait pleine avant de retomber à zéro.
   const [affiche, setAffiche] = useState(valeur);
-  const [anime, setAnime] = useState(false);
+  const [phase, setPhase] = useState<"attente" | "fixe" | "anime" | "pose">(
+    "attente"
+  );
+  // Flou de mouvement, en em : il suit la vitesse du ressort, donc s'efface
+  // de lui-même à mesure que le chiffre ralentit. L'unité relative le met à
+  // l'échelle du texte, le même flou en pixels noyant les petites mesures
+  // pendant qu'il se voit à peine sur le grand chiffre.
+  const [flou, setFlou] = useState(0);
 
-  // Remise à zéro avant que le navigateur ne peigne : réglée dans un effet
-  // ordinaire, la valeur finale s'afficherait une image avant de retomber.
   useEffetAvantPeinture(() => {
-    if (!morceaux) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!morceaux || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Rien à animer : le chiffre se découvre tel quel.
+      setPhase("fixe");
+      return;
+    }
     setAffiche(compose(0, morceaux));
-    setAnime(true);
+    setPhase("anime");
   }, [morceaux]);
+  const anime = phase === "anime";
 
   useEffect(() => {
     if (!anime || !morceaux) return;
@@ -179,9 +199,16 @@ export default function ChiffreAnime({
       const reste = Math.abs(morceaux.cible - r.position);
       if (reste < cran) {
         setAffiche(compose(morceaux.cible, morceaux));
+        setFlou(0);
+        setPhase("pose");
         return;
       }
+
       setAffiche(compose(r.position, morceaux));
+      // La vitesse est rapportée à la course, sans quoi « 61,5 » serait
+      // beaucoup plus flou que « 7 » pour un mouvement d'apparence égale.
+      const allure = Math.abs(r.vitesse) / (morceaux.cible || 1);
+      setFlou(Math.min(allure * FLOU_FACTEUR, FLOU_MAX));
       image = requestAnimationFrame(avance);
     };
 
@@ -209,7 +236,17 @@ export default function ChiffreAnime({
     <span ref={ref} className={className}>
       {/* La valeur défile trop vite pour être annoncée : les technologies
        * d'assistance lisent le chiffre final, une fois. */}
-      <span aria-hidden="true">{affiche}</span>
+      <span
+        aria-hidden="true"
+        // La feuille de style cache cet attribut tant que le script n'a pas
+        // repris la main. Sans script, la classe qui l'active n'existe pas
+        // et le chiffre reste lisible.
+        data-chiffre={phase === "attente" ? "attente" : undefined}
+        className={phase === "pose" ? "rebond-chiffre" : undefined}
+        style={flou > 0 ? { filter: `blur(${flou.toFixed(3)}em)` } : undefined}
+      >
+        {affiche}
+      </span>
       <span className="sr-only">{valeur}</span>
     </span>
   );

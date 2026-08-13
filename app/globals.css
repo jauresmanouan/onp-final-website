@@ -227,6 +227,53 @@
   }
 }
 
+/* ── Chiffres qui montent ────────────────────────────────────────
+ * Le chiffre attend son hydratation sans se montrer. `visibility` plutôt
+ * que `display` : la place reste réservée, sinon la ligne se réorganiserait
+ * au moment où la montée commence.
+ */
+.js [data-chiffre="attente"] {
+  visibility: hidden;
+}
+
+/* Petit rebond à l'arrivée, amorti en trois oscillations de plus en plus
+ * courtes. Il porte sur l'échelle et non sur le nombre : le chiffre ne
+ * dépasse jamais sa valeur, une population qui monterait à 29,6 avant de
+ * revenir à 29,4 tromperait le lecteur.
+ */
+@keyframes rebond-chiffre {
+  0% {
+    transform: scale(1);
+  }
+  28% {
+    transform: scale(1.045);
+  }
+  52% {
+    transform: scale(0.988);
+  }
+  72% {
+    transform: scale(1.012);
+  }
+  88% {
+    transform: scale(0.996);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.rebond-chiffre {
+  /* `transform` n'a pas de prise sur une boîte en ligne. */
+  display: inline-block;
+  animation: rebond-chiffre 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rebond-chiffre {
+    animation: none;
+  }
+}
+
 /* ── Filet de progression ────────────────────────────────────────
  * Va-et-vient plutôt que remplissage : on ne connaît pas la durée du
  * chargement, et une barre qui progresse vers un terme inventé ment sur ce
