@@ -8,7 +8,7 @@ const PISTES = [
   { href: "/office", label: "L'Office", texte: "Missions, historique et organisation" },
   { href: "/actualites", label: "Actualités", texte: "Les activités de l'Office" },
   { href: "/publications", label: "Publications", texte: "Notes, études et rapports" },
-  { href: "/dashboard", label: "Banque de données", texte: "Indicateurs et cartographie" },
+  { href: "/dashboard", label: "Tableau de bord", texte: "Indicateurs et cartographie" },
 ];
 
 /**

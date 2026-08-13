@@ -134,7 +134,7 @@ export default function SiteHeader() {
             variante="primary"
             className="mt-2 flex w-full py-2.5"
           >
-            Banque de données
+            Tableau de bord
           </BoutonLien>
         </nav>
       )}
