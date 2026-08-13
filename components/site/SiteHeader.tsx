@@ -3,9 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/accueil/ThemeToggle";
+import { BoutonLien } from "@/components/site/LienNavigation";
 import { IDENTITE } from "@/content/site/institution";
 
 const NAV = [
@@ -25,6 +26,13 @@ const NAV = [
 export default function SiteHeader() {
   const pathname = usePathname();
   const [ouvert, setOuvert] = useState(false);
+
+  // Le menu se referme dès que la page a changé. Le faire au clic de chaque
+  // lien laissait le panneau ouvert derrière un retour navigateur, et le
+  // refermait avant même que la page suivante ne soit prête.
+  useEffect(() => {
+    setOuvert(false);
+  }, [pathname]);
 
   const estActif = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -77,18 +85,19 @@ export default function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link
+            <BoutonLien
               href="/dashboard"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              variante="primary"
+              className="hidden sm:inline-flex"
             >
               Banque de données
-              <ArrowUpRight className="size-4" />
-            </Link>
+            </BoutonLien>
             <ThemeToggle />
             <button
               type="button"
               onClick={() => setOuvert((o) => !o)}
               aria-expanded={ouvert}
+              aria-controls="menu-mobile"
               aria-label={ouvert ? "Fermer le menu" : "Ouvrir le menu"}
               className="lg:hidden inline-flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
             >
@@ -100,6 +109,7 @@ export default function SiteHeader() {
 
       {ouvert && (
         <nav
+          id="menu-mobile"
           className="lg:hidden border-t border-border bg-background px-6 py-3"
           aria-label="Navigation principale"
         >
@@ -107,7 +117,6 @@ export default function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => setOuvert(false)}
               className={`block rounded-md px-3 py-2.5 text-sm font-medium ${
                 estActif(item.href)
                   ? "text-primary bg-primary/10"
@@ -117,14 +126,13 @@ export default function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <Link
+          <BoutonLien
             href="/dashboard"
-            onClick={() => setOuvert(false)}
-            className="mt-2 flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+            variante="primary"
+            className="mt-2 flex w-full py-2.5"
           >
             Banque de données
-            <ArrowUpRight className="size-4" />
-          </Link>
+          </BoutonLien>
         </nav>
       )}
     </header>

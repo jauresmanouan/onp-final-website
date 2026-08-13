@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import PageHeader from "@/components/site/PageHeader";
+import { LienFleche } from "@/components/site/LienNavigation";
 import DateActualite from "@/components/site/DateActualite";
 import { getActualite, getActualites, getActualiteSlugs } from "@/lib/content";
 
@@ -73,13 +73,9 @@ export default async function ActualitePage({ params }: Props) {
           ))}
         </div>
 
-        <Link
-          href="/actualites"
-          className="mt-12 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:gap-3 transition-all"
-        >
-          <ArrowLeft className="size-4" />
+        <LienFleche href="/actualites" icone="retour" className="mt-12">
           Toutes les actualités
-        </Link>
+        </LienFleche>
       </article>
 
       {autres.length > 0 && (
@@ -95,13 +91,7 @@ export default async function ActualitePage({ params }: Props) {
               >
                 À lire également
               </h2>
-              <Link
-                href="/actualites"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:gap-3 transition-all"
-              >
-                Toutes les actualités
-                <ArrowRight className="size-4" />
-              </Link>
+              <LienFleche href="/actualites">Toutes les actualités</LienFleche>
             </div>
 
             <div className="mt-8 grid gap-6 md:grid-cols-3">

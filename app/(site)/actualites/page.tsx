@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
 import PageHeader from "@/components/site/PageHeader";
+import { Indicateur } from "@/components/site/LienNavigation";
 import DateActualite from "@/components/site/DateActualite";
 import { getActualites } from "@/lib/content";
 
@@ -52,7 +52,7 @@ export default async function ActualitesPage() {
                 </p>
                 <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
                   Lire l&apos;article
-                  <ArrowRight className="size-4" />
+                  <Indicateur icone="fleche" />
                 </span>
               </div>
             </Link>

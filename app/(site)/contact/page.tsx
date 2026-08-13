@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Mail, MapPin, Phone, PhoneCall, ArrowRight } from "lucide-react";
+import { Mail, MapPin, Phone, PhoneCall } from "lucide-react";
 import PageHeader from "@/components/site/PageHeader";
+import { LienFleche } from "@/components/site/LienNavigation";
+import NouvelleFenetre from "@/components/site/NouvelleFenetre";
 import { getCoordonnees } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -96,6 +97,7 @@ export default async function ContactPage() {
               className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"
             >
               Facebook
+              <NouvelleFenetre />
             </a>
             <a
               href={c.twitter}
@@ -104,6 +106,7 @@ export default async function ContactPage() {
               className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"
             >
               X
+              <NouvelleFenetre />
             </a>
           </div>
         </section>
@@ -112,13 +115,7 @@ export default async function ContactPage() {
           <p className="text-[15px] text-muted-foreground">
             Votre question a peut-être déjà sa réponse.
           </p>
-          <Link
-            href="/faq"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:gap-3 transition-all"
-          >
-            Consulter la foire aux questions
-            <ArrowRight className="size-4" />
-          </Link>
+          <LienFleche href="/faq">Consulter la foire aux questions</LienFleche>
         </div>
       </div>
     </>

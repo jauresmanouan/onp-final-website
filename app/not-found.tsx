@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/site/SiteHeader";
 import SiteFooter from "@/components/site/SiteFooter";
+import { BoutonLien } from "@/components/site/LienNavigation";
 
 const PISTES = [
   { href: "/office", label: "L'Office", texte: "Missions, historique et organisation" },
@@ -33,13 +33,9 @@ export default function NotFound() {
               L&apos;adresse demandée est introuvable. Elle a peut-être changé
               lors de la refonte du site, ou comporte une erreur de saisie.
             </p>
-            <Link
-              href="/"
-              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3.5 text-sm font-semibold text-accent-foreground transition-transform hover:scale-[1.02]"
-            >
+            <BoutonLien href="/" icone="fleche" className="mt-8">
               Retour à l&apos;accueil
-              <ArrowRight className="size-4" />
-            </Link>
+            </BoutonLien>
           </div>
         </section>
 

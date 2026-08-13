@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import PageHeader from "@/components/site/PageHeader";
+import { LienFleche } from "@/components/site/LienNavigation";
 import { getFAQ } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -51,13 +50,7 @@ export default async function FaqPage() {
           <p className="text-[15px] text-muted-foreground">
             Vous n&apos;avez pas trouvé votre réponse ?
           </p>
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:gap-3 transition-all"
-          >
-            Nous écrire
-            <ArrowRight className="size-4" />
-          </Link>
+          <LienFleche href="/contact">Nous écrire</LienFleche>
         </div>
       </div>
     </>
