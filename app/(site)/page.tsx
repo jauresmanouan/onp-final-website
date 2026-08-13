@@ -10,6 +10,7 @@ import {
   getPartenaires,
 } from "@/lib/content";
 import BandeauAnnonce from "@/components/site/BandeauAnnonce";
+import ChiffreAnime from "@/components/site/ChiffreAnime";
 import NouvelleFenetre from "@/components/site/NouvelleFenetre";
 import { BoutonLien, LienFleche } from "@/components/site/LienNavigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -127,9 +128,11 @@ async function Ouverture() {
       {principal && (
         <div className="mt-12 lg:mt-16">
           <p className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
-            <span className="font-display text-[clamp(4.5rem,15vw,11rem)] font-bold leading-[0.85] tracking-tighter tabular-nums">
-              {principal.valeur}
-            </span>
+            <ChiffreAnime
+              valeur={principal.valeur}
+              duree={2200}
+              className="font-display text-[clamp(4.5rem,15vw,11rem)] font-bold leading-[0.85] tracking-tighter tabular-nums"
+            />
             <span className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-[0.12em] text-accent">
               {principal.unite}
             </span>
@@ -145,7 +148,7 @@ async function Ouverture() {
         {secondaires.map((c, i) => (
           <div key={c.intitule} className={i > 0 ? "lg:pl-8" : "lg:pr-8"}>
             <dd className="font-display text-3xl lg:text-4xl font-bold tracking-tight tabular-nums">
-              {c.valeur}
+              <ChiffreAnime valeur={c.valeur} />
             </dd>
             <dt className="mt-1.5 text-sm font-medium">{c.intitule}</dt>
             <p className="mt-0.5 text-xs text-panel-foreground/65 leading-snug">
