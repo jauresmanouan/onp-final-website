@@ -31,7 +31,11 @@ export default async function PublicationsPage() {
 
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16 lg:py-20 space-y-16">
         {groupes.map((groupe) => (
-          <section key={groupe.categorie} aria-labelledby={`cat-${groupe.categorie}`}>
+          <section
+            key={groupe.categorie}
+            aria-labelledby={`cat-${groupe.categorie}`}
+            data-apparition
+          >
             <h2
               id={`cat-${groupe.categorie}`}
               className="font-display text-2xl font-bold tracking-tight"
@@ -43,13 +47,13 @@ export default async function PublicationsPage() {
             </p>
 
             <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {groupe.publications.map((p) => (
-                <li key={p.slug}>
+              {groupe.publications.map((p, i) => (
+                <li key={p.slug} data-apparition data-apparition-retard={i * 70}>
                   {/* Toute la carte télécharge : la couverture est le lien */}
                   <a
                     href={p.fichier}
                     download
-                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-lg"
+                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-lg"
                   >
                     {/* Ratio A4, comme la page rendue : la couverture entre
                      * entière dans le cadre, sans recadrage. */}

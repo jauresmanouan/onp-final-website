@@ -27,7 +27,7 @@ export default async function ActualitesPage() {
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16 lg:py-20">
         {/* L'article le plus récent occupe toute la largeur */}
         {une && (
-          <article className="group">
+          <article className="group" data-apparition>
             <Link
               href={`/actualites/${une.slug}`}
               className="grid gap-8 lg:grid-cols-2 lg:items-center"
@@ -60,8 +60,13 @@ export default async function ActualitesPage() {
         )}
 
         <div className="mt-16 grid gap-x-6 gap-y-12 border-t border-border pt-12 sm:grid-cols-2 lg:grid-cols-3">
-          {suite.map((a) => (
-            <article key={a.slug} className="group">
+          {suite.map((a, i) => (
+            <article
+              key={a.slug}
+              data-apparition
+              data-apparition-retard={i * 80}
+              className="group"
+            >
               <Link href={`/actualites/${a.slug}`} className="flex h-full flex-col">
                 <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-muted">
                   <Image

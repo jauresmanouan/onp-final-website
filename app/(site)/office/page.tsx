@@ -67,7 +67,7 @@ export default async function OfficePage() {
 
           <div className="min-w-0 max-w-3xl space-y-20">
             {/* ── Présentation ─────────────────────────────── */}
-            <section id="presentation" className="scroll-mt-28">
+            <section id="presentation" className="scroll-mt-28" data-apparition>
               <h2 className="font-display text-2xl lg:text-3xl font-bold tracking-tight">
                 Présentation
               </h2>
@@ -106,7 +106,7 @@ export default async function OfficePage() {
             </section>
 
             {/* ── Missions ─────────────────────────────────── */}
-            <section id="missions" className="scroll-mt-28">
+            <section id="missions" className="scroll-mt-28" data-apparition>
               <h2 className="font-display text-2xl lg:text-3xl font-bold tracking-tight">
                 Missions
               </h2>
@@ -134,7 +134,7 @@ export default async function OfficePage() {
             </section>
 
             {/* ── Impulsions ───────────────────────────────── */}
-            <section id="impulsions" className="scroll-mt-28">
+            <section id="impulsions" className="scroll-mt-28" data-apparition>
               <h2 className="font-display text-2xl lg:text-3xl font-bold tracking-tight">
                 Impulsions stratégiques
               </h2>
@@ -158,7 +158,7 @@ export default async function OfficePage() {
             </section>
 
             {/* ── Historique ───────────────────────────────── */}
-            <section id="historique" className="scroll-mt-28">
+            <section id="historique" className="scroll-mt-28" data-apparition>
               <h2 className="font-display text-2xl lg:text-3xl font-bold tracking-tight">
                 Historique
               </h2>
@@ -194,7 +194,7 @@ export default async function OfficePage() {
             </section>
 
             {/* ── Organisation ─────────────────────────────── */}
-            <section id="organisation" className="scroll-mt-28">
+            <section id="organisation" className="scroll-mt-28" data-apparition>
               <h2 className="font-display text-2xl lg:text-3xl font-bold tracking-tight">
                 Organisation
               </h2>
@@ -236,7 +236,7 @@ export default async function OfficePage() {
             </section>
 
             {/* ── Direction ────────────────────────────────── */}
-            <section id="direction" className="scroll-mt-28">
+            <section id="direction" className="scroll-mt-28" data-apparition>
               <h2 className="font-display text-2xl lg:text-3xl font-bold tracking-tight">
                 Direction
               </h2>

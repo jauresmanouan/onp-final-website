@@ -13,6 +13,7 @@ import VueEnsembleTab from "./tabs/VueEnsembleTab";
 import { IndicatorInfoProvider } from "./IndicatorInfoContext";
 import IndicatorInfoPanel from "./IndicatorInfoPanel";
 import IndicatorPanelBridge from "./IndicatorPanelBridge";
+import ConseilGrandEcran from "./ConseilGrandEcran";
 
 const TabFallback = () => (
   <div className="space-y-4 animate-pulse">
@@ -100,6 +101,8 @@ export default function ONPDashboard() {
   return (
     <IndicatorInfoProvider>
       <div className="max-w-7xl mx-auto px-6 lg:px-20 xl:px-40 py-8">
+        <ConseilGrandEcran />
+
         {/* Titre de page */}
         <div className="mb-8">
           <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-panel-foreground">

@@ -28,13 +28,13 @@ export default async function PartenairesPage() {
 
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16 lg:py-20">
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {partenaires.map((p) => (
-            <li key={p.nom}>
+          {partenaires.map((p, i) => (
+            <li key={p.nom} data-apparition data-apparition-retard={i * 70}>
               <a
                 href={p.site}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="group flex h-full flex-col gap-5 rounded-xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
+                className="group flex h-full flex-col gap-5 rounded-xl border border-border bg-card p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-md"
               >
                 {/* Pastille claire : plusieurs logos sont des JPEG à fond
                  * blanc opaque, qu'aucun filtre de teinte ne peut adapter. */}

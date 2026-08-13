@@ -194,7 +194,7 @@ async function Office() {
     <section aria-labelledby="office-titre" className="bg-background">
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
         <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
+          <div data-apparition>
             <p className="text-xs font-semibold uppercase tracking-wide text-primary">
               L&apos;institution
             </p>
@@ -209,7 +209,11 @@ async function Office() {
             </LienFleche>
           </div>
 
-          <div className="space-y-5 text-[15px] leading-relaxed text-foreground/85">
+          <div
+            data-apparition
+            data-apparition-retard="120"
+            className="space-y-5 text-[15px] leading-relaxed text-foreground/85"
+          >
             {presentation.corps.map((p) => (
               <p key={p.slice(0, 40)}>{p}</p>
             ))}
@@ -221,7 +225,9 @@ async function Office() {
           {missions.slice(0, 3).map((m, i) => (
             <article
               key={m.titre}
-              className="rounded-xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
+              data-apparition
+              data-apparition-retard={i * 90}
+              className="rounded-xl border border-border bg-card p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-md"
             >
               <p className="font-display text-2xl font-bold text-primary tabular-nums">
                 {String(i + 1).padStart(2, "0")}
@@ -276,7 +282,7 @@ async function Actualites() {
       className="bg-muted/30 border-y border-border"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-4" data-apparition>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-primary">
               À la une
@@ -292,10 +298,12 @@ async function Actualites() {
         </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {actualites.map((a) => (
+          {actualites.map((a, i) => (
             <article
               key={a.slug}
-              className="group overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-md"
+              data-apparition
+              data-apparition-retard={i * 90}
+              className="group overflow-hidden rounded-xl border border-border bg-card transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             >
               <Link href={`/actualites/${a.slug}`} className="block">
                 <div className="relative aspect-[16/10] overflow-hidden bg-muted">
@@ -361,7 +369,10 @@ function BanqueDeDonnees() {
   return (
     <section className="bg-background">
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
-        <div className="overflow-hidden rounded-2xl bg-panel text-panel-foreground">
+        <div
+          data-apparition
+          className="overflow-hidden rounded-2xl bg-panel text-panel-foreground"
+        >
           <div className="grid gap-10 p-10 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:p-14">
             <div>
               <h2 className="font-display text-3xl lg:text-4xl font-bold tracking-tight leading-tight">
@@ -406,7 +417,10 @@ async function Partenaires() {
       className="border-t border-border bg-background"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
+        <div
+          className="flex flex-wrap items-baseline justify-between gap-4"
+          data-apparition
+        >
           <h2
             id="partenaires-titre"
             className="font-display text-2xl font-bold tracking-tight"
@@ -421,8 +435,8 @@ async function Partenaires() {
          * couleurs dans les deux thèmes, là où un filtre de teinte
          * transformerait les JPEG en rectangles pleins. */}
         <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {partenaires.map((p) => (
-            <li key={p.nom}>
+          {partenaires.map((p, i) => (
+            <li key={p.nom} data-apparition data-apparition-retard={i * 55}>
               <a
                 href={p.site}
                 target="_blank"
