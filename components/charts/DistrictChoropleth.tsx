@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useCSV } from "./useCSV";
 import { parseNumber, formatFrench, formatCompactNumber } from "./transformCSV";
 import ChoroplethMap from "./ChoroplethMap";
-import DistrictStatsPanel from "./DistrictStatsPanel";
+import FicheDistrict from "./FicheDistrict";
 import { quantileScale, type MapScale } from "./mapScale";
 import {
   MAP_PALETTES,
@@ -173,7 +173,8 @@ export default function DistrictChoropleth() {
         )}
       </div>
 
-      <DistrictStatsPanel
+      {/* Profil du district désigné, en panneau glissant par la droite */}
+      <FicheDistrict
         district={selected}
         rows={data}
         onClose={() => setSelected(null)}
