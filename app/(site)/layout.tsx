@@ -1,6 +1,7 @@
 import SiteHeader from "@/components/site/SiteHeader";
 import SiteFooter from "@/components/site/SiteFooter";
 import Apparitions from "@/components/site/Apparitions";
+import RetourHaut from "@/components/site/RetourHaut";
 
 /**
  * Ossature du site institutionnel. Le tableau de bord vit hors de ce groupe
@@ -25,6 +26,7 @@ export default function SiteLayout({
         {children}
       </main>
       <SiteFooter />
+      <RetourHaut />
       {/* Guette les blocs à révéler, sur toutes les pages du site */}
       <Apparitions />
     </div>

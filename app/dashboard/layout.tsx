@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ONPHeader from "@/components/dashboard/onp/ONPHeader";
 import ONPFooter from "@/components/dashboard/onp/ONPFooter";
+import RetourHaut from "@/components/site/RetourHaut";
 
 export const metadata: Metadata = {
   title: "Tableau de bord",
@@ -16,6 +17,7 @@ export default function DashboardLayout({
       <ONPHeader />
       <main className="flex-1 bg-panel text-panel-foreground">{children}</main>
       <ONPFooter />
+      <RetourHaut />
     </div>
   );
 }
