@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/accueil/ThemeToggle";
 import IndicatorSearch from "./IndicatorSearch";
+import BoutonPalette from "@/components/site/BoutonPalette";
 
 const NAV: { href: string; label: string }[] = [];
 
@@ -68,6 +69,9 @@ export default function ONPHeader() {
           <div className="hidden md:block">
             <IndicatorSearch />
           </div>
+          {/* Sous 768 px, le champ cède la place à la palette : même recherche,
+            * en plein écran, sans disputer la barre au logo. */}
+          <BoutonPalette className="md:hidden" />
           <ThemeToggle />
         </div>
       </div>

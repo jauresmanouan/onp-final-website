@@ -47,8 +47,10 @@ export default function IndicatorSearch() {
       );
     };
     // Si on n'est pas sur le dashboard, y aller d'abord puis déclencher.
-    if (pathname !== "/onp") {
-      router.push(`/onp#${tab}`);
+    // La route s'appelle /dashboard : le /onp d'origine ne menait nulle part,
+    // et la recherche ne fonctionnait donc que depuis le tableau de bord.
+    if (pathname !== "/dashboard") {
+      router.push(`/dashboard#${tab}`);
       // Laisser le dashboard se monter avant d'émettre l'événement.
       setTimeout(dispatch, 350);
     } else {
