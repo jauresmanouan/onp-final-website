@@ -34,13 +34,18 @@ import { CHART_COLORS } from "./chartColors";
  */
 export default function FicheDistrict({
   district,
+  compare,
   rows,
   onClose,
+  onCompare,
 }: {
   /** District désigné sur la carte ; null referme le panneau. */
   district: string | null;
+  /** District mis en regard, ou null. */
+  compare: string | null;
   rows: DistrictRow[];
   onClose: () => void;
+  onCompare: (district: string | null) => void;
 }) {
   const ouvert = district != null;
 
@@ -80,7 +85,13 @@ export default function FicheDistrict({
         }`}
       >
         {ouvert && (
-          <Contenu district={district} rows={rows} onClose={onClose} />
+          <Contenu
+            district={district}
+            compare={compare}
+            rows={rows}
+            onClose={onClose}
+            onCompare={onCompare}
+          />
         )}
       </aside>
     </>
@@ -89,17 +100,38 @@ export default function FicheDistrict({
 
 function Contenu({
   district,
+  compare,
   rows,
   onClose,
+  onCompare,
 }: {
   district: string;
+  compare: string | null;
   rows: DistrictRow[];
   onClose: () => void;
+  onCompare: (district: string | null) => void;
 }) {
   const scores = buildScoreStats(rows, district, DISTRICT_INDICATORS);
   const population = scores.find((s) => s.key === "population");
   const indices = scores.filter((s) => s.key !== "population");
   const share = populationShare(rows, district);
+
+  // Les valeurs du district mis en regard, rangées par indice pour que chaque
+  // rail retrouve la sienne sans reparcourir la liste.
+  const enRegard = new Map<string, number>(
+    compare
+      ? buildScoreStats(rows, compare, DISTRICT_INDICATORS).map((s) => [
+          s.key,
+          s.value,
+        ])
+      : [],
+  );
+
+  // Les autres districts, pour le choix de la comparaison.
+  const autres = rows
+    .map((r) => r.district)
+    .filter((n) => n !== "National" && districtKey(n) !== districtKey(district))
+    .sort((a, b) => a.localeCompare(b, "fr"));
   const connu = rows.some(
     (r) => districtKey(r.district) === districtKey(district),
   );
@@ -144,13 +176,23 @@ function Contenu({
             </div>
           )}
 
+          <Comparaison
+            autres={autres}
+            compare={compare}
+            onCompare={onCompare}
+          />
+
           <Titre>Indices 2021</Titre>
           <div className="space-y-3.5">
             {indices.map((score) => (
-              <Rail key={score.key} score={score} />
+              <Rail
+                key={score.key}
+                score={score}
+                enRegard={enRegard.get(score.key) ?? null}
+              />
             ))}
           </div>
-          <Repere />
+          <Repere compare={compare} />
 
           <Titre>
             Dividende démographique
@@ -160,7 +202,12 @@ function Contenu({
           </Titre>
           <div className="space-y-2.5">
             {DD_SERIES.map((serie) => (
-              <Serie key={serie.id} serie={serie} district={district} />
+              <Serie
+                key={serie.id}
+                serie={serie}
+                district={district}
+                compare={compare}
+              />
             ))}
           </div>
 
@@ -185,7 +232,14 @@ function Titre({ children }: { children: React.ReactNode }) {
  * Un indice sur son rail : le point situe le district, le trait la moyenne
  * des districts. Les indices allant tous de 0 à 1, le rail est cette échelle.
  */
-function Rail({ score }: { score: ScoreStat }) {
+function Rail({
+  score,
+  enRegard,
+}: {
+  score: ScoreStat;
+  /** Valeur du district mis en regard sur le même indice, ou null. */
+  enRegard: number | null;
+}) {
   const position = borne(score.value * 100);
   const moyenne = borne(score.average * 100);
   const auDessus = score.value >= score.average;
@@ -198,6 +252,11 @@ function Rail({ score }: { score: ScoreStat }) {
         </span>
         <span className="shrink-0 text-xs font-semibold tabular-nums">
           {score.value.toFixed(3)}
+          {enRegard != null && (
+            <span className="ml-1.5 font-normal text-muted-foreground">
+              contre {enRegard.toFixed(3)}
+            </span>
+          )}
         </span>
       </div>
 
@@ -208,6 +267,15 @@ function Rail({ score }: { score: ScoreStat }) {
           className="absolute top-0 h-2 w-px bg-foreground/35"
           style={{ left: `${moyenne}%` }}
         />
+        {/* Le district mis en regard : un cercle vide, qui se distingue du
+         * point plein sans lui disputer l'œil. */}
+        {enRegard != null && (
+          <span
+            aria-hidden="true"
+            className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/70 bg-card"
+            style={{ left: `${borne(enRegard * 100)}%` }}
+          />
+        )}
         <span
           aria-hidden="true"
           className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -229,10 +297,10 @@ function Rail({ score }: { score: ScoreStat }) {
   );
 }
 
-/** Dit une fois ce que valent les deux repères, plutôt qu'à chaque ligne. */
-function Repere() {
+/** Dit une fois ce que valent les repères, plutôt qu'à chaque ligne. */
+function Repere({ compare }: { compare: string | null }) {
   return (
-    <p className="mt-3 flex items-center gap-3 text-[10px] text-muted-foreground">
+    <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
       <span className="flex items-center gap-1.5">
         <span className="size-1.5 rounded-full bg-foreground/60" />
         ce district
@@ -241,7 +309,48 @@ function Repere() {
         <span className="h-2 w-px bg-foreground/35" />
         moyenne des districts
       </span>
+      {compare && (
+        <span className="flex items-center gap-1.5">
+          <span className="size-1.5 rounded-full border border-foreground/70 bg-card" />
+          {compare}
+        </span>
+      )}
     </p>
+  );
+}
+
+/**
+ * Choix du district mis en regard.
+ *
+ * Un `select` natif plutôt qu'une liste dessinée : quatorze noms, un choix,
+ * aucune raison d'inventer un objet là où le système en a déjà un — et il
+ * s'ouvre en roue sur téléphone, ce qu'aucune liste maison ne fait aussi bien.
+ */
+function Comparaison({
+  autres,
+  compare,
+  onCompare,
+}: {
+  autres: string[];
+  compare: string | null;
+  onCompare: (district: string | null) => void;
+}) {
+  return (
+    <label className="mt-5 flex items-center gap-2 border-t border-border/60 pt-4 text-[11px] text-muted-foreground">
+      <span className="shrink-0">Comparer à</span>
+      <select
+        value={compare ?? ""}
+        onChange={(e) => onCompare(e.target.value || null)}
+        className="min-w-0 flex-1 cursor-pointer rounded-md border border-border bg-transparent px-2 py-1 text-[11px] text-foreground outline-none transition-colors hover:border-foreground/40 focus-visible:border-ring"
+      >
+        <option value="">aucun district</option>
+        {autres.map((n) => (
+          <option key={n} value={n}>
+            {n}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
@@ -254,12 +363,17 @@ function Repere() {
 function Serie({
   serie,
   district,
+  compare,
 }: {
   serie: (typeof DD_SERIES)[number];
   district: string;
+  compare: string | null;
 }) {
   const { data, isLoading } = useCSV(serie.file);
   const stat = isLoading ? null : buildSerieStat(data, district, serie);
+  // Le fichier est déjà là : la seconde série ne coûte qu'une lecture de plus.
+  const statRegard =
+    isLoading || !compare ? null : buildSerieStat(data, compare, serie);
 
   if (isLoading) {
     return <div className="h-5 animate-pulse rounded bg-muted/50" />;
@@ -276,9 +390,14 @@ function Serie({
       >
         {stat.label}
       </span>
-      <Courbe stat={stat} />
+      <Courbe stat={stat} enRegard={statRegard} />
       <span className="w-10 shrink-0 text-right text-[11px] font-medium tabular-nums">
         {stat.last?.toFixed(3) ?? "–"}
+        {statRegard && (
+          <span className="block font-normal text-muted-foreground">
+            {statRegard.last?.toFixed(3) ?? "–"}
+          </span>
+        )}
       </span>
       <span
         className={`w-12 shrink-0 text-right text-[10px] tabular-nums ${
@@ -297,9 +416,21 @@ function Serie({
   );
 }
 
-/** Courbe de six points, cadrée sur l'amplitude de la série. */
-function Courbe({ stat }: { stat: SerieStat }) {
-  const connues = stat.values.filter((v): v is number => v != null);
+/**
+ * Courbe de six points. En comparaison, les deux séries partagent le même
+ * cadrage — sans quoi deux courbes également ascendantes paraîtraient
+ * identiques alors que l'une progresse dix fois plus que l'autre.
+ */
+function Courbe({
+  stat,
+  enRegard,
+}: {
+  stat: SerieStat;
+  enRegard: SerieStat | null;
+}) {
+  const connues = [...stat.values, ...(enRegard?.values ?? [])].filter(
+    (v): v is number => v != null,
+  );
   if (connues.length < 2) return <span className="flex-1" />;
 
   const min = Math.min(...connues);
@@ -308,16 +439,18 @@ function Courbe({ stat }: { stat: SerieStat }) {
   const largeur = 64;
   const hauteur = 14;
 
-  const points = stat.values
-    .map((v, i) => {
-      if (v == null) return null;
-      const x = (i / (DD_YEARS.length - 1)) * largeur;
-      const y = hauteur - ((v - min) / amplitude) * hauteur;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .filter((p): p is string => p != null)
-    .join(" ");
+  const tracer = (valeurs: (number | null)[]) =>
+    valeurs
+      .map((v, i) => {
+        if (v == null) return null;
+        const x = (i / (DD_YEARS.length - 1)) * largeur;
+        const y = hauteur - ((v - min) / amplitude) * hauteur;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .filter((p): p is string => p != null)
+      .join(" ");
 
+  const points = tracer(stat.values);
   const monte = (stat.last ?? 0) >= (stat.first ?? 0);
 
   return (
@@ -328,6 +461,19 @@ function Courbe({ stat }: { stat: SerieStat }) {
       role="img"
       aria-label={`Évolution ${DD_YEARS[0]} à ${DD_YEARS[DD_YEARS.length - 1]}`}
     >
+      {enRegard && (
+        <polyline
+          points={tracer(enRegard.values)}
+          fill="none"
+          stroke="currentColor"
+          strokeOpacity={0.35}
+          strokeWidth={1}
+          strokeDasharray="2 2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      )}
       <polyline
         points={points}
         fill="none"

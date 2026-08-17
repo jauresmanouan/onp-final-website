@@ -67,6 +67,8 @@ type Props = {
   onSelect?: (name: string) => void;
   /** Zone actuellement sélectionnée, mise en avant sur la carte */
   selectedName?: string | null;
+  /** Zone mise en regard de la sélection, cerclée sans être soulevée */
+  comparedName?: string | null;
 };
 
 const DEFAULT_RAMP = [
@@ -173,6 +175,7 @@ export default function ChoroplethMap({
   height = 460,
   onSelect,
   selectedName = null,
+  comparedName = null,
 }: Props) {
   const fmtLabel = labelFormatter ?? valueFormatter;
   const [geo, setGeo] = useState<FeatureCollection | null>(null);
@@ -267,11 +270,17 @@ export default function ChoroplethMap({
   // Un SVG n'a pas de z-index : c'est l'ordre du document qui empile. La zone
   // agrandie passe donc en dernier, sinon ses voisines lui rognent les bords.
   const ordered = useMemo(() => {
-    if (!selectedName) return paths;
-    const front = paths.filter((p) => p.name === selectedName);
-    if (front.length === 0) return paths;
-    return [...paths.filter((p) => p.name !== selectedName), ...front];
-  }, [paths, selectedName]);
+    // Les deux zones en jeu passent devant : la comparée d'abord, la
+    // sélectionnée par-dessus, puisque c'est elle qui se soulève.
+    const devant = [comparedName, selectedName].filter(
+      (n): n is string => n != null,
+    );
+    if (devant.length === 0) return paths;
+    return [
+      ...paths.filter((p) => !devant.includes(p.name)),
+      ...devant.flatMap((n) => paths.filter((p) => p.name === n)),
+    ];
+  }, [paths, selectedName, comparedName]);
 
   // Le suivi du curseur pour l'infobulle change à chaque pixel parcouru.
   // Les tracés, eux, ne dépendent que de la zone survolée : on les mémoïse
@@ -284,13 +293,18 @@ export default function ChoroplethMap({
       <g>
         {ordered.map((p) => {
           const isSelected = selectedName === p.name;
+          const isCompared = comparedName === p.name;
           return (
             <path
               key={p.key}
               d={p.d}
               fill={p.fill}
-              stroke="var(--map-stroke)"
-              strokeWidth={0.75}
+              // La zone mise en regard n'est pas soulevée : elle est cernée.
+              // Deux reliefs à l'écran diraient deux sélections, alors qu'il
+              // n'y en a qu'une, et un point de comparaison.
+              stroke={isCompared ? "var(--chart-text)" : "var(--map-stroke)"}
+              strokeWidth={isCompared ? 2 : 0.75}
+              strokeDasharray={isCompared ? "3 2" : undefined}
               role={onSelect ? "button" : undefined}
               tabIndex={onSelect ? 0 : undefined}
               aria-label={onSelect ? `Voir les statistiques de ${p.name}` : undefined}
@@ -315,7 +329,16 @@ export default function ChoroplethMap({
         })}
       </g>
     ),
-    [ordered, selectedName, hoveredName, onSelect, enterZone, moveZone, leaveZone],
+    [
+      ordered,
+      selectedName,
+      comparedName,
+      hoveredName,
+      onSelect,
+      enterZone,
+      moveZone,
+      leaveZone,
+    ],
   );
 
   const labels = useMemo(

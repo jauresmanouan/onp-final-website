@@ -47,6 +47,8 @@ export default function DistrictChoropleth() {
   const [indicator, setIndicator] = useState<DistrictIndicatorKey>("population");
   const [paletteId, setPaletteId] = useState<string>(DEFAULT_PALETTE_ID);
   const [selected, setSelected] = useState<string | null>(null);
+  /** District mis en regard du district désigné, dans la fiche. */
+  const [compare, setCompare] = useState<string | null>(null);
 
   const current = getDistrictIndicator(indicator);
   const palette = getPalette(paletteId);
@@ -79,6 +81,17 @@ export default function DistrictChoropleth() {
 
   const legendFormatter = (v: number) =>
     current.kind === "count" ? formatCompactNumber(v) : v.toFixed(2);
+
+  /** Changer de district abandonne la comparaison : elle portait sur l'autre. */
+  const choisir = (nom: string) => {
+    setSelected(nom);
+    setCompare((c) => (c === nom ? null : c));
+  };
+
+  const fermer = () => {
+    setSelected(null);
+    setCompare(null);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -157,8 +170,9 @@ export default function DistrictChoropleth() {
               breaks={scale.breaks}
               valueFormatter={valueFormatter}
               labelFormatter={legendFormatter}
-              onSelect={setSelected}
+              onSelect={choisir}
               selectedName={selected}
+              comparedName={compare}
             />
           )}
         </div>
@@ -173,11 +187,13 @@ export default function DistrictChoropleth() {
         )}
       </div>
 
-      {/* Profil du district désigné, en panneau glissant par la droite */}
+      {/* Profil du district désigné, en panneau glissant par la gauche */}
       <FicheDistrict
         district={selected}
+        compare={compare}
         rows={data}
-        onClose={() => setSelected(null)}
+        onClose={fermer}
+        onCompare={setCompare}
       />
     </div>
   );
