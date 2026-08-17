@@ -5,6 +5,7 @@ import { useCSV } from "./useCSV";
 import { parseNumber, formatFrench, formatCompactNumber } from "./transformCSV";
 import ChoroplethMap from "./ChoroplethMap";
 import FicheDistrict from "./FicheDistrict";
+import EtatFigure from "./EtatFigure";
 import { quantileScale, type MapScale } from "./mapScale";
 import {
   MAP_PALETTES,
@@ -41,7 +42,7 @@ const GEO_TO_ONP: Record<string, string> = {
 const normalizeName = (raw: string) => GEO_TO_ONP[raw] ?? raw;
 
 export default function DistrictChoropleth() {
-  const { data, isLoading } = useCSV<DistrictRow>(
+  const { data, isLoading, error } = useCSV<DistrictRow>(
     "/data/onp/districts_snapshot_2021.csv",
   );
   const [indicator, setIndicator] = useState<DistrictIndicatorKey>("population");
@@ -217,6 +218,14 @@ export default function DistrictChoropleth() {
         <div className="min-h-[300px]">
           {isLoading ? (
             <div className="h-[460px] w-full animate-pulse rounded-xl bg-muted/40" />
+          ) : data.length === 0 ? (
+            /* Sans le cliché 2021, la carte se dessinerait quand même, toutes
+             * zones grises : mieux vaut dire pourquoi. */
+            <EtatFigure
+              variante={error ? "erreur" : "vide"}
+              hauteur={460}
+              quoi="La carte des districts"
+            />
           ) : (
             <ChoroplethMap
               geoUrl="/data/onp/geo/districts_ci.geojson"
@@ -236,7 +245,7 @@ export default function DistrictChoropleth() {
         </div>
 
         {/* Légende */}
-        {!isLoading && (
+        {!isLoading && data.length > 0 && (
           <Legend
             scale={scale}
             label={current.label}

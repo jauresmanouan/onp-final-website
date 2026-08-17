@@ -14,6 +14,7 @@ import { useCSV, type CSVRow } from "./useCSV";
 import { wideToLong, parseNumber } from "./transformCSV";
 import ChartTooltip from "./ChartTooltip";
 import { CHART_COLORS } from "./chartColors";
+import EtatFigure from "./EtatFigure";
 
 type LineSeries = {
   /** Pour layout="long" : nom de la colonne */
@@ -56,7 +57,15 @@ export default function CSVLineChart({
   const { data: rawData, isLoading, error } = useCSV<CSVRow>(csvFile);
 
   if (isLoading) return <ChartSkeleton height={height} />;
-  if (error || rawData.length === 0) return <ChartError height={height} />;
+  if (error || rawData.length === 0) {
+    return (
+      <EtatFigure
+        variante={error ? "erreur" : "vide"}
+        hauteur={height}
+        quoi="Cette série"
+      />
+    );
+  }
 
   // Préparer les données selon le layout
   let chartData: Array<{ x: string; [k: string]: string | number }> = [];
@@ -147,13 +156,3 @@ function ChartSkeleton({ height }: { height: number }) {
   );
 }
 
-function ChartError({ height }: { height: number }) {
-  return (
-    <div
-      className="w-full bg-muted/30 rounded flex items-center justify-center text-xs text-muted-foreground"
-      style={{ height }}
-    >
-      Aucune donnée disponible
-    </div>
-  );
-}

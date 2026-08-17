@@ -11,6 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import { useCSV, type CSVRow } from "./useCSV";
+import EtatFigure from "./EtatFigure";
 import { parseNumber } from "./transformCSV";
 import ChartTooltip from "./ChartTooltip";
 import IndicatorInfoButton from "@/components/dashboard/onp/IndicatorInfoButton";
@@ -61,7 +62,7 @@ export default function MiniTrendChart({
   xValues,
   xTickFormatter,
 }: Props) {
-  const { data: rawData, isLoading } = useCSV<CSVRow>(csvFile);
+  const { data: rawData, isLoading, error } = useCSV<CSVRow>(csvFile);
 
   // Construire chartData : [{ x: "1988", value: 55 }, ...]
   let chartData: Array<{ x: string; value: number }> = [];
@@ -149,10 +150,19 @@ export default function MiniTrendChart({
           {yUnitSymbol}
         </div>
 
-        {isLoading || chartData.length === 0 ? (
+        {isLoading ? (
           <div
             className="w-full bg-muted/30 rounded animate-pulse"
             style={{ height }}
+          />
+        ) : chartData.length === 0 ? (
+          /* Le vide muet d'avant se confondait avec un chargement qui
+           * n'aboutit pas : on dit maintenant lequel des deux c'est. */
+          <EtatFigure
+            variante={error ? "erreur" : "vide"}
+            hauteur={height}
+            quoi="Cette tendance"
+            compact
           />
         ) : (
           <ResponsiveContainer width="100%" height={height}>

@@ -33,9 +33,10 @@ import { CHART_COLORS } from "@/components/charts/chartColors";
 import ChartTooltip from "@/components/charts/ChartTooltip";
 import IndicatorInfoButton from "@/components/dashboard/onp/IndicatorInfoButton";
 import FigureGrandEcran from "@/components/dashboard/onp/FigureGrandEcran";
+import EtatFigure from "@/components/charts/EtatFigure";
 
 export default function DistrictsTab() {
-  const { data, isLoading } = useCSV<DistrictRow>(
+  const { data, isLoading, error } = useCSV<DistrictRow>(
     "/data/onp/districts_snapshot_2021.csv",
   );
   const [barIndicator, setBarIndicator] =
@@ -214,6 +215,15 @@ export default function DistrictsTab() {
                         ))}
                       </tr>
                     ))
+                  ) : data.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="p-5">
+                        <EtatFigure
+                          variante={error ? "erreur" : "vide"}
+                          quoi="Ce tableau"
+                        />
+                      </td>
+                    </tr>
                   ) : (
                     data.map((row) => {
                       const isNational = row.district === "National";

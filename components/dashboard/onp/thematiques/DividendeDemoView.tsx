@@ -8,6 +8,7 @@ import IndicatorSwitcher from "@/components/charts/IndicatorSwitcher";
 import DownloadCSVButton from "@/components/charts/DownloadCSVButton";
 import ChartTooltip from "@/components/charts/ChartTooltip";
 import FigureGrandEcran from "@/components/dashboard/onp/FigureGrandEcran";
+import EtatFigure from "@/components/charts/EtatFigure";
 import { useCSV } from "@/components/charts/useCSV";
 import { parseNumber } from "@/components/charts/transformCSV";
 import { CHART_COLORS } from "@/components/charts/chartColors";
@@ -154,7 +155,7 @@ type DiagRow = {
 };
 
 function IndicateursNationauxSynthetiques() {
-  const { data, isLoading } = useCSV<DiagRow>(
+  const { data, isLoading, error } = useCSV<DiagRow>(
     "/data/onp/indicateurs_national_diag.csv",
   );
 
@@ -175,8 +176,14 @@ function IndicateursNationauxSynthetiques() {
       }
     >
       <FigureGrandEcran quoi="Ces cinq piliers comparés">
-        {isLoading || chartData.length === 0 ? (
+        {isLoading ? (
           <div className="h-[340px] bg-muted/30 rounded animate-pulse" />
+        ) : chartData.length === 0 ? (
+          <EtatFigure
+            variante={error ? "erreur" : "vide"}
+            hauteur={340}
+            quoi="Ce graphique"
+          />
         ) : (
           <ResponsiveContainer width="100%" height={340}>
             <BarChart
@@ -269,7 +276,7 @@ function ClassementDistricts() {
   const [selectedIndex, setSelectedIndex] = useState<string>("DDMI");
   const current = INDICES.find((i) => i.value === selectedIndex) ?? INDICES[0];
 
-  const { data, isLoading } = useCSV<DDRow>(current.file);
+  const { data, isLoading, error } = useCSV<DDRow>(current.file);
 
   const ranking = data
     .filter((r) => r.district !== "National")
@@ -314,8 +321,14 @@ function ClassementDistricts() {
       }
     >
       <FigureGrandEcran quoi="Ce classement par district">
-        {isLoading || ranking.length === 0 ? (
+        {isLoading ? (
           <div className="h-[420px] bg-muted/30 rounded animate-pulse" />
+        ) : ranking.length === 0 ? (
+          <EtatFigure
+            variante={error ? "erreur" : "vide"}
+            hauteur={420}
+            quoi="Ce classement"
+          />
         ) : (
           <ResponsiveContainer width="100%" height={420}>
             <BarChart

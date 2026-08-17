@@ -14,6 +14,7 @@ import { useCSV, type CSVRow } from "./useCSV";
 import { parseNumber } from "./transformCSV";
 import ChartTooltip from "./ChartTooltip";
 import { CHART_COLORS } from "./chartColors";
+import EtatFigure from "./EtatFigure";
 
 type Props = {
   csvFile: string;
@@ -47,7 +48,15 @@ export default function PopulationPyramid({
   const { data: rawData, isLoading, error } = useCSV<CSVRow>(csvFile);
 
   if (isLoading) return <PyramidSkeleton height={height} />;
-  if (error || rawData.length === 0) return <PyramidError height={height} />;
+  if (error || rawData.length === 0) {
+    return (
+      <EtatFigure
+        variante={error ? "erreur" : "vide"}
+        hauteur={height}
+        quoi="La pyramide des âges"
+      />
+    );
+  }
 
   // Préparer : hommes en valeurs négatives (gauche), femmes positives (droite)
   // Inverser l'ordre pour avoir 85+ en haut
@@ -130,13 +139,3 @@ function PyramidSkeleton({ height }: { height: number }) {
   );
 }
 
-function PyramidError({ height }: { height: number }) {
-  return (
-    <div
-      className="w-full bg-muted/30 rounded flex items-center justify-center text-xs text-muted-foreground"
-      style={{ height }}
-    >
-      Aucune donnée disponible
-    </div>
-  );
-}
