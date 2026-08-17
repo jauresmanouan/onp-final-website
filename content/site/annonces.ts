@@ -29,6 +29,6 @@ export const ANNONCE: Annonce | null = {
   ton: "info",
   etiquette: "Données",
   message:
-    "Les résultats du Recensement Général de la Population et de l'Habitat 2021 sont consultables et téléchargeables dans la banque de données.",
+    "Les résultats du Recensement Général de la Population et de l'Habitat 2021 sont consultables et téléchargeables dans la rubrique Nos chiffres.",
   lien: { href: "/dashboard", label: "Consulter" },
 };

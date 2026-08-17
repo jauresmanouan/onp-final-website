@@ -1,10 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { CHIFFRES } from "@/content/site/destinations";
 
 const NAVIGATION = [
   { href: "/", label: "Accueil" },
-  { href: "/dashboard", label: "Tableau de bord" },
+  { href: CHIFFRES.href, label: CHIFFRES.nom },
   { href: "/dashboard#districts", label: "Districts" },
 ] as const;
 

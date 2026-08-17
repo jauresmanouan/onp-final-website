@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import ONPHeader from "@/components/dashboard/onp/ONPHeader";
 import ONPFooter from "@/components/dashboard/onp/ONPFooter";
 import RetourHaut from "@/components/site/RetourHaut";
+import { CHIFFRES } from "@/content/site/destinations";
 import PaletteCommandes from "@/components/site/PaletteCommandes";
 
 export const metadata: Metadata = {
-  title: "Tableau de bord",
+  title: CHIFFRES.nom,
   description:
     "Indicateurs nationaux de population de Côte d'Ivoire, données officielles de l'ONP.",
 };

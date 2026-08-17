@@ -13,6 +13,7 @@ import BandeauAnnonce from "@/components/site/BandeauAnnonce";
 import ChiffreAnime from "@/components/site/ChiffreAnime";
 import NouvelleFenetre from "@/components/site/NouvelleFenetre";
 import { BoutonLien, LienFleche } from "@/components/site/LienNavigation";
+import { CHIFFRES } from "@/content/site/destinations";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   SqueletteCartes,
@@ -160,10 +161,10 @@ async function Ouverture() {
 
       <div className="mt-12 flex flex-col gap-3 sm:flex-row">
         <BoutonLien
-          href="/dashboard"
+          href={CHIFFRES.href}
           libelleChargement="Chargement des données…"
         >
-          Consulter les chiffres
+          {CHIFFRES.appel}
         </BoutonLien>
       </div>
     </CadreOuverture>
@@ -366,7 +367,7 @@ function AttenteActualites() {
   );
 }
 
-/* ── Banque de données ───────────────────────────────────────────── */
+/* ── Nos chiffres ────────────────────────────────────────────────── */
 
 function BanqueDeDonnees() {
   return (
@@ -388,11 +389,11 @@ function BanqueDeDonnees() {
                 et téléchargeables au format CSV pour vos propres analyses.
               </p>
               <BoutonLien
-                href="/dashboard"
+                href={CHIFFRES.href}
                 libelleChargement="Chargement des données…"
                 className="mt-8"
               >
-                Ouvrir la banque de données
+                {CHIFFRES.appel}
               </BoutonLien>
             </div>
             <Image

@@ -3,12 +3,13 @@ import Image from "next/image";
 import SiteHeader from "@/components/site/SiteHeader";
 import SiteFooter from "@/components/site/SiteFooter";
 import { BoutonLien } from "@/components/site/LienNavigation";
+import { CHIFFRES } from "@/content/site/destinations";
 
 const PISTES = [
   { href: "/office", label: "L'Office", texte: "Missions, historique et organisation" },
   { href: "/actualites", label: "Actualités", texte: "Les activités de l'Office" },
   { href: "/publications", label: "Publications", texte: "Notes, études et rapports" },
-  { href: "/dashboard", label: "Tableau de bord", texte: "Indicateurs et cartographie" },
+  { href: CHIFFRES.href, label: CHIFFRES.nom, texte: CHIFFRES.detail },
 ];
 
 /**

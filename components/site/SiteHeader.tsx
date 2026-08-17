@@ -10,6 +10,7 @@ import { BoutonLien } from "@/components/site/LienNavigation";
 import BarreChargement from "@/components/site/BarreChargement";
 import BoutonPalette from "@/components/site/BoutonPalette";
 import { IDENTITE } from "@/content/site/institution";
+import { CHIFFRES } from "@/content/site/destinations";
 
 const NAV = [
   { href: "/office", label: "L'Office" },
@@ -92,12 +93,12 @@ export default function SiteHeader() {
 
           <div className="flex items-center gap-2">
             <BoutonLien
-              href="/dashboard"
+              href={CHIFFRES.href}
               variante="primary"
               libelleChargement="Chargement…"
               className="hidden sm:inline-flex"
             >
-              Nos chiffres
+              {CHIFFRES.nom}
             </BoutonLien>
             <BoutonPalette />
             <ThemeToggle />
@@ -136,12 +137,12 @@ export default function SiteHeader() {
             </Link>
           ))}
           <BoutonLien
-            href="/dashboard"
+            href={CHIFFRES.href}
             variante="primary"
             libelleChargement="Chargement…"
             className="mt-2 flex w-full py-2.5"
           >
-            Tableau de bord
+            {CHIFFRES.nom}
           </BoutonLien>
         </nav>
       )}

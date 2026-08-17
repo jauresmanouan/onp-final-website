@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getInstitution, getLiensInstitutionnels } from "@/lib/content";
 import NouvelleFenetre from "@/components/site/NouvelleFenetre";
+import { CHIFFRES } from "@/content/site/destinations";
 
 const RUBRIQUES = [
   { href: "/office", label: "L'Office" },
@@ -10,7 +11,7 @@ const RUBRIQUES = [
   { href: "/partenaires", label: "Partenaires" },
   { href: "/contact", label: "Contact" },
   { href: "/faq", label: "Foire aux questions" },
-  { href: "/dashboard", label: "Banque de données" },
+  { href: CHIFFRES.href, label: CHIFFRES.nom },
 ];
 
 export default async function SiteFooter() {

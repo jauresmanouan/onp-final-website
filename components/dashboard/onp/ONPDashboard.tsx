@@ -14,6 +14,7 @@ import { IndicatorInfoProvider } from "./IndicatorInfoContext";
 import IndicatorInfoPanel from "./IndicatorInfoPanel";
 import IndicatorPanelBridge from "./IndicatorPanelBridge";
 import ConseilGrandEcran from "./ConseilGrandEcran";
+import { CHIFFRES } from "@/content/site/destinations";
 import {
   SqueletteDistricts,
   SquelettePopulation,
@@ -104,7 +105,7 @@ export default function ONPDashboard() {
         {/* Titre de page */}
         <div className="mb-8">
           <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-panel-foreground">
-            Tableau de bord
+            {CHIFFRES.nom}
           </h1>
           <p className="text-sm text-panel-foreground/80 mt-1">
             Indicateurs nationaux de population - Côte d&apos;Ivoire · 1975–2021

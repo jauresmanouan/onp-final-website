@@ -8,6 +8,7 @@ import {
   getIndicatorTab,
   ONP_INDICATORS,
 } from "@/components/dashboard/onp/indicators";
+import { CHIFFRES } from "@/content/site/destinations";
 
 /**
  * Palette de commandes, appelée au clavier depuis n'importe quelle page.
@@ -25,7 +26,7 @@ type Destination = {
   id: string;
   libelle: string;
   detail?: string;
-  groupe: "Indicateurs" | "Tableau de bord" | "Pages";
+  groupe: "Indicateurs" | typeof CHIFFRES.nom | "Pages";
   /** Ce que fait la sélection : naviguer, et parfois ouvrir une fiche. */
   aller: () => void;
 };
@@ -143,7 +144,7 @@ export default function PaletteCommandes() {
         id: `tab-${o.hash}`,
         libelle: o.libelle,
         detail: o.detail,
-        groupe: "Tableau de bord",
+        groupe: CHIFFRES.nom,
         aller: () => router.push(`/dashboard#${o.hash}`),
       }),
     );
