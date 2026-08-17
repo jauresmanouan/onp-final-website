@@ -8,7 +8,9 @@ import {
   getAnnonce,
   getInstitution,
   getPartenaires,
+  getPublicationsParCategorie,
 } from "@/lib/content";
+import { Download } from "lucide-react";
 import BandeauAnnonce from "@/components/site/BandeauAnnonce";
 import ChiffreAnime from "@/components/site/ChiffreAnime";
 import NouvelleFenetre from "@/components/site/NouvelleFenetre";
@@ -55,6 +57,10 @@ export default function AccueilPage() {
 
       <Suspense fallback={<AttenteActualites />}>
         <Actualites />
+      </Suspense>
+
+      <Suspense fallback={<AttentePublications />}>
+        <Publications />
       </Suspense>
 
       <BanqueDeDonnees />
@@ -200,7 +206,11 @@ async function Office() {
 
   return (
     <section aria-labelledby="office-titre" className="bg-background">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
+      {/* La section forte de la page : c'est la seule à respirer autant, et
+        * la seule dont le titre monte jusqu'au quatrième corps. Les autres
+        * se rangent sous elle — sans quoi cinq sections de même poids ne
+        * laissent à l'œil aucun point de repos. */}
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-24 lg:py-28">
         <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
           <div data-apparition>
             <p className="text-xs font-semibold uppercase tracking-wide text-primary">
@@ -260,7 +270,7 @@ function AttenteOffice() {
       </span>
       <div
         aria-hidden="true"
-        className="mx-auto max-w-7xl px-6 lg:px-10 py-20"
+        className="mx-auto max-w-7xl px-6 lg:px-10 py-24 lg:py-28"
       >
         <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
@@ -297,7 +307,7 @@ async function Actualites() {
             </p>
             <h2
               id="actus-titre"
-              className="mt-3 font-display text-3xl lg:text-4xl font-bold tracking-tight"
+              className="mt-3 font-display text-3xl font-bold tracking-tight"
             >
               Les activités de l&apos;Office
             </h2>
@@ -367,19 +377,134 @@ function AttenteActualites() {
   );
 }
 
+/* ── Publications ────────────────────────────────────────────────────
+ * L'accueil poussait trois fois vers les chiffres et pas une seule fois vers
+ * les documents, alors que le rapport en PDF est ce que vient chercher une
+ * bonne part des visiteurs institutionnels — ministère, bailleur, presse.
+ * Trois couvertures suffisent à dire qu'il y en a, et à ouvrir la rubrique.
+ */
+
+async function Publications() {
+  // Une publication par famille plutôt que les trois premières du catalogue :
+  // celles-ci sont toutes des notes de la même série, et l'accueil donnerait
+  // à croire que l'Office ne publie que cela.
+  const groupes = await getPublicationsParCategorie();
+  const selection = groupes
+    .slice(0, 3)
+    .flatMap((g) => (g.publications[0] ? [{ ...g.publications[0], famille: g.label }] : []));
+
+  return (
+    <section
+      aria-labelledby="publications-titre"
+      className="border-t border-border bg-background"
+    >
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16">
+        <div
+          className="flex flex-wrap items-end justify-between gap-4"
+          data-apparition
+        >
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+              Ressources
+            </p>
+            <h2
+              id="publications-titre"
+              className="mt-3 font-display text-3xl font-bold tracking-tight"
+            >
+              Notes, études et rapports
+            </h2>
+          </div>
+          <LienFleche href="/publications">
+            Toutes les publications
+          </LienFleche>
+        </div>
+
+        {/* La couverture porte le lien, comme dans la rubrique : le document
+          * se télécharge d'un clic, sans page intermédiaire. */}
+        <ul className="mt-10 grid gap-6 sm:grid-cols-3">
+          {selection.map((pub, i) => (
+            <li key={pub.slug} data-apparition data-apparition-retard={i * 90}>
+              <a
+                href={pub.fichier}
+                download
+                className="group flex gap-4 rounded-xl border border-border bg-card p-4 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <div className="relative aspect-[1/1.414] w-16 shrink-0 overflow-hidden rounded-md bg-muted">
+                  <Image
+                    src={pub.apercu}
+                    alt=""
+                    fill
+                    sizes="64px"
+                    className="object-cover object-top"
+                  />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    {pub.famille}
+                  </p>
+                  <h3 className="mt-1 text-sm font-semibold leading-snug line-clamp-3 group-hover:text-primary transition-colors">
+                    {pub.titre}
+                  </h3>
+                  <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+                    <Download className="size-3" aria-hidden="true" />
+                    PDF · {poidsPdf(pub.poidsKo)}
+                  </p>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function AttentePublications() {
+  return (
+    <section className="border-t border-border bg-background" aria-busy="true">
+      <span role="status" className="sr-only">
+        Chargement des publications
+      </span>
+      <div
+        aria-hidden="true"
+        className="mx-auto max-w-7xl px-6 lg:px-10 py-16"
+      >
+        <Skeleton className="h-3 w-24" />
+        <Skeleton className="mt-3 h-9 w-72 max-w-full" />
+        <ul className="mt-10 grid gap-6 sm:grid-cols-3">
+          {Array.from({ length: 3 }, (_, i) => (
+            <li key={i}>
+              <Skeleton className="h-[7.5rem] w-full rounded-xl" />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+/** 6480 Ko devient « 6,3 Mo » ; en dessous du méga, on reste en kilo-octets. */
+function poidsPdf(ko: number): string {
+  return ko >= 1024
+    ? `${(ko / 1024).toFixed(1).replace(".", ",")} Mo`
+    : `${ko} Ko`;
+}
+
 /* ── Nos chiffres ────────────────────────────────────────────────── */
 
 function BanqueDeDonnees() {
   return (
     <section className="bg-background">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
+      {/* Le panneau porte déjà sa propre marge intérieure : la section qui
+        * l'entoure se resserre, sinon deux respirations se cumulent. */}
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16">
         <div
           data-apparition
           className="overflow-hidden rounded-2xl bg-panel text-panel-foreground"
         >
-          <div className="grid gap-10 p-10 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:p-14">
+          <div className="grid gap-10 p-8 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:p-12">
             <div>
-              <h2 className="font-display text-3xl lg:text-4xl font-bold tracking-tight leading-tight">
+              <h2 className="font-display text-2xl lg:text-3xl font-bold tracking-tight leading-tight">
                 Les données démographiques, ouvertes à tous
               </h2>
               <p className="mt-5 max-w-xl leading-relaxed text-panel-foreground/85">
@@ -424,14 +549,17 @@ async function Partenaires() {
       aria-labelledby="partenaires-titre"
       className="border-t border-border bg-background"
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
+      {/* La brève de la page : un mur de logos ne se lit pas, il se constate.
+        * Des pastilles plus basses sur une seule ligne disent la même chose
+        * en trois fois moins de hauteur. */}
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-14">
         <div
           className="flex flex-wrap items-baseline justify-between gap-4"
           data-apparition
         >
           <h2
             id="partenaires-titre"
-            className="font-display text-2xl font-bold tracking-tight"
+            className="font-display text-xl font-bold tracking-tight"
           >
             Partenaires
           </h2>
@@ -442,22 +570,28 @@ async function Partenaires() {
          * opaque. Une pastille claire les accueille tous et préserve leurs
          * couleurs dans les deux thèmes, là où un filtre de teinte
          * transformerait les JPEG en rectangles pleins. */}
-        <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {partenaires.map((p, i) => (
-            <li key={p.nom} data-apparition data-apparition-retard={i * 55}>
+        {/* Une apparition sur la bande entière plutôt qu'une par logo : huit
+          * révélations décalées pour huit pastilles, c'est l'attention prise
+          * en otage par le décor. */}
+        <ul
+          className="mt-8 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-8"
+          data-apparition
+        >
+          {partenaires.map((p) => (
+            <li key={p.nom}>
               <a
                 href={p.site}
                 target="_blank"
                 rel="noreferrer noopener"
                 title={p.intitule}
-                className="flex h-20 items-center justify-center rounded-xl border border-border bg-white px-5 transition-colors hover:border-primary/40"
+                className="flex h-16 items-center justify-center rounded-lg border border-border bg-white px-3 transition-colors hover:border-primary/40"
               >
                 <Image
                   src={p.logo}
                   alt={p.intitule ?? p.nom}
                   width={200}
                   height={80}
-                  className="max-h-10 w-auto object-contain"
+                  className="max-h-8 w-auto object-contain"
                 />
                 <NouvelleFenetre />
               </a>
@@ -477,13 +611,13 @@ function AttentePartenaires() {
       </span>
       <div
         aria-hidden="true"
-        className="mx-auto max-w-7xl px-6 lg:px-10 py-20"
+        className="mx-auto max-w-7xl px-6 lg:px-10 py-14"
       >
-        <Skeleton className="h-7 w-40" />
-        <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <Skeleton className="h-6 w-32" />
+        <ul className="mt-8 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-8">
           {Array.from({ length: 8 }, (_, i) => (
             <li key={i}>
-              <Skeleton className="h-20 w-full rounded-xl" />
+              <Skeleton className="h-16 w-full rounded-lg" />
             </li>
           ))}
         </ul>
