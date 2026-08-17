@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Link2, X } from "lucide-react";
 import { useCSV } from "./useCSV";
 import { formatFrench } from "./transformCSV";
 import { DISTRICT_INDICATORS, type DistrictRow } from "./districtIndicators";
@@ -147,14 +147,17 @@ function Contenu({
             {district}
           </h3>
         </div>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Fermer la fiche"
-          className="-mr-1 -mt-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-        >
-          <X className="size-4" />
-        </button>
+        <div className="-mr-1 -mt-1 flex shrink-0 items-center gap-0.5">
+          <CopierLien />
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fermer la fiche"
+            className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
       </header>
 
       {!connu ? (
@@ -217,6 +220,50 @@ function Contenu({
         </>
       )}
     </>
+  );
+}
+
+/**
+ * Copie l'adresse en cours, qui porte l'indicateur, le district ouvert et
+ * celui qui lui est comparé. Le bouton se change en « Copié » quelques
+ * secondes : c'est le seul retour dont un presse-papiers a besoin.
+ */
+function CopierLien() {
+  const [copie, setCopie] = useState(false);
+
+  useEffect(() => {
+    if (!copie) return;
+    const t = setTimeout(() => setCopie(false), 2000);
+    return () => clearTimeout(t);
+  }, [copie]);
+
+  const copier = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopie(true);
+    } catch {
+      // Presse-papiers refusé (contexte non sécurisé, permission) : on ne
+      // ment pas en affichant « Copié ».
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={copier}
+      aria-label="Copier le lien vers cette fiche"
+      title="Copier le lien vers cette fiche"
+      className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+    >
+      {copie ? (
+        <Check className="size-4 text-emerald-600 dark:text-emerald-400" />
+      ) : (
+        <Link2 className="size-4" />
+      )}
+      <span className="sr-only" role="status">
+        {copie ? "Lien copié" : ""}
+      </span>
+    </button>
   );
 }
 

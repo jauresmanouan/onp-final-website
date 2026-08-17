@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCSV } from "./useCSV";
 import { parseNumber, formatFrench, formatCompactNumber } from "./transformCSV";
 import ChoroplethMap from "./ChoroplethMap";
@@ -81,6 +81,64 @@ export default function DistrictChoropleth() {
 
   const legendFormatter = (v: number) =>
     current.kind === "count" ? formatCompactNumber(v) : v.toFixed(2);
+
+  // ── Le lien porte l'état de la carte ────────────────────────────────────
+  //
+  // Ce qu'on veut envoyer à un collègue, sur un site de données, c'est une
+  // figure précise : « la pauvreté par district, Abidjan face au Comoé », pas
+  // l'adresse du tableau de bord. L'indicateur, le district ouvert et celui
+  // qui lui est comparé s'écrivent donc dans l'adresse, et s'y relisent.
+  //
+  // `history.replaceState` plutôt que le routeur : rien ne doit s'ajouter à
+  // l'historique — un retour arrière doit ramener à la page précédente, pas
+  // défaire un à un les districts qu'on a parcourus. C'est aussi ce que fait
+  // déjà ONPDashboard pour l'onglet courant, et cela évite d'imposer une
+  // frontière de suspense à une page rendue statiquement.
+
+  /** L'adresse a-t-elle été relue ? Tant que non, on n'y écrit pas. */
+  const relu = useRef(false);
+
+  // Relecture de l'adresse. Les districts attendent les données : leur nom
+  // n'est validé qu'une fois le fichier lu.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const indic = params.get("indicateur");
+    if (indic && DISTRICT_INDICATORS.some((i) => i.key === indic)) {
+      setIndicator(indic as DistrictIndicatorKey);
+    }
+
+    if (data.length === 0) return;
+    const connu = (nom: string | null) =>
+      nom && data.some((r) => r.district === nom) ? nom : null;
+
+    const district = connu(params.get("district"));
+    setSelected(district);
+    setCompare(district ? connu(params.get("face-a")) : null);
+    relu.current = true;
+  }, [data]);
+
+  // Écriture de l'adresse, à chaque changement d'état de la carte. Elle
+  // attend la relecture : sans cela, le premier rendu — où rien n'est encore
+  // sélectionné parce que le fichier n'est pas arrivé — effacerait aussitôt
+  // le district que le lien partagé demandait.
+  useEffect(() => {
+    if (!relu.current) return;
+    const params = new URLSearchParams(window.location.search);
+    const poser = (cle: string, valeur: string | null) =>
+      valeur ? params.set(cle, valeur) : params.delete(cle);
+
+    poser("indicateur", indicator === "population" ? null : indicator);
+    poser("district", selected);
+    poser("face-a", compare);
+
+    const requete = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${requete ? `?${requete}` : ""}${window.location.hash}`,
+    );
+  }, [indicator, selected, compare]);
 
   /** Changer de district abandonne la comparaison : elle portait sur l'autre. */
   const choisir = (nom: string) => {
