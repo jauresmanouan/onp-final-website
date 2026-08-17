@@ -4,6 +4,7 @@ import ONPFooter from "@/components/dashboard/onp/ONPFooter";
 import RetourHaut from "@/components/site/RetourHaut";
 import { CHIFFRES } from "@/content/site/destinations";
 import PaletteCommandes from "@/components/site/PaletteCommandes";
+import RetraitVoile from "@/components/site/RetraitVoile";
 
 export const metadata: Metadata = {
   title: CHIFFRES.nom,
@@ -21,6 +22,8 @@ export default function DashboardLayout({
       <ONPFooter />
       <RetourHaut />
       <PaletteCommandes />
+      {/* Lève le disque de transition quand on revient de la conversation */}
+      <RetraitVoile />
     </div>
   );
 }

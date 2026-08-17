@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/accueil/ThemeToggle";
 import IndicatorSearch from "./IndicatorSearch";
 import BoutonPalette from "@/components/site/BoutonPalette";
+import BoutonAssistant from "@/components/site/BoutonAssistant";
 
 const NAV: { href: string; label: string }[] = [];
 
@@ -72,6 +73,7 @@ export default function ONPHeader() {
           {/* Sous 768 px, le champ cède la place à la palette : même recherche,
             * en plein écran, sans disputer la barre au logo. */}
           <BoutonPalette className="md:hidden" />
+          <BoutonAssistant />
           <ThemeToggle />
         </div>
       </div>

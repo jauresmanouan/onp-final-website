@@ -21,3 +21,18 @@ export const CHIFFRES = {
   /** Le nom dans une phrase, sans majuscule d'intitulé. */
   dansLaPhrase: "nos chiffres",
 } as const;
+
+/**
+ * La conversation, écrite ici pour la même raison que ci-dessus : elle est
+ * appelée depuis les deux en-têtes et depuis la palette, et un nom recopié
+ * trois fois finit toujours par diverger.
+ *
+ * Elle vit hors du site et hors du tableau de bord, sur une page nue : c'est
+ * une adresse, pas une rubrique.
+ */
+export const ASSISTANT = {
+  href: "/assistant",
+  nom: "AI chat",
+  appel: "Poser une question",
+  detail: "Interroger les indicateurs et les documents en français",
+} as const;

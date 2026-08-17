@@ -120,39 +120,12 @@ function textColorFor(fill: string): string {
 }
 
 /**
- * Mise en avant d'une zone par un léger grossissement, plutôt que par un
- * contour rapporté : la forme du district reste la seule ligne à l'écran.
- * Le grossissement part du centroïde, donc la zone gonfle sur place au lieu
- * de glisser, et une ombre courte la décolle de ses voisines.
+ * Le seul mouvement conservé sur la carte : le passage d'une couleur à
+ * l'autre quand l'indicateur change. La sélection, elle, se lit au trait —
+ * une zone qui grossit au clic déplace ses voisines et fait bouger la carte
+ * entière à chaque choix, là où un contour la désigne sans rien remuer.
  */
-function liftStyle(
-  p: { cx: number; cy: number },
-  isSelected: boolean,
-  isHovered: boolean,
-): CSSProperties {
-  const scale = isSelected ? 1.07 : isHovered ? 1.025 : 1;
-
-  // Montée vive, retombée plus longue et amortie : en quittant un district
-  // pour un autre, la zone abandonnée redescend derrière la nouvelle au lieu
-  // de claquer, ce qui donne un enchaînement continu plutôt que deux à-coups.
-  const transition =
-    scale === 1
-      ? "transform 340ms cubic-bezier(0.33, 0, 0.15, 1), filter 300ms ease-out, fill 200ms ease-out"
-      : "transform 200ms cubic-bezier(0.22, 1, 0.36, 1), filter 180ms ease-out, fill 200ms ease-out";
-
-  const base: CSSProperties = { transition };
-  if (scale === 1 || !Number.isFinite(p.cx) || !Number.isFinite(p.cy)) {
-    return base;
-  }
-  return {
-    ...base,
-    transformOrigin: `${p.cx}px ${p.cy}px`,
-    transform: `scale(${scale})`,
-    filter: isSelected
-      ? "drop-shadow(0 1.5px 2.5px rgb(0 0 0 / 0.35))"
-      : undefined,
-  };
-}
+const TRANSITION_ZONE: CSSProperties = { transition: "fill 200ms ease-out" };
 
 /** Halo porté par les étiquettes, à l'opposé de leur couleur de texte. */
 function haloFor(textColor: string): string {
@@ -282,40 +255,37 @@ export default function ChoroplethMap({
     ];
   }, [paths, selectedName, comparedName]);
 
-  // Le suivi du curseur pour l'infobulle change à chaque pixel parcouru.
-  // Les tracés, eux, ne dépendent que de la zone survolée : on les mémoïse
-  // sur ce seul nom, sinon les quatorze formes seraient reconstruites à
-  // chaque mouvement de souris et l'animation en deviendrait saccadée.
-  const hoveredName = hovered?.name ?? null;
-
+  // Le suivi du curseur pour l'infobulle change à chaque pixel parcouru,
+  // mais plus rien dans les tracés n'en dépend : ils sont mémoïsés hors de
+  // ce mouvement, et les quatorze formes ne sont plus reconstruites à chaque
+  // déplacement de souris.
   const shapes = useMemo(
     () => (
       <g>
-        {ordered.map((p, i) => {
+        {ordered.map((p) => {
           const isSelected = selectedName === p.name;
           const isCompared = comparedName === p.name;
           return (
             <path
               key={p.key}
-              // Les zones se posent l'une après l'autre, dans l'ordre du
-              // fichier : quatorze fois trente millisecondes, la carte est
-              // construite en moins d'une demi-seconde.
-              className="zone-carte"
               d={p.d}
               fill={p.fill}
-              // La zone mise en regard n'est pas soulevée : elle est cernée.
-              // Deux reliefs à l'écran diraient deux sélections, alors qu'il
-              // n'y en a qu'une, et un point de comparaison.
-              stroke={isCompared ? "var(--chart-text)" : "var(--map-stroke)"}
-              strokeWidth={isCompared ? 2 : 0.75}
+              // Les deux zones remarquables se distinguent par leur trait, et
+              // entre elles par sa nature : plein pour la sélection, tireté
+              // pour le point de comparaison.
+              stroke={
+                isSelected || isCompared
+                  ? "var(--chart-text)"
+                  : "var(--map-stroke)"
+              }
+              strokeWidth={isSelected || isCompared ? 2 : 0.75}
               strokeDasharray={isCompared ? "3 2" : undefined}
               role={onSelect ? "button" : undefined}
               tabIndex={onSelect ? 0 : undefined}
               aria-label={onSelect ? `Voir les statistiques de ${p.name}` : undefined}
               aria-pressed={onSelect ? isSelected : undefined}
               style={{
-                ...liftStyle(p, isSelected, hoveredName === p.name),
-                animationDelay: `${i * 30}ms`,
+                ...TRANSITION_ZONE,
                 cursor: "pointer",
                 outline: "none",
               }}
@@ -334,16 +304,7 @@ export default function ChoroplethMap({
         })}
       </g>
     ),
-    [
-      ordered,
-      selectedName,
-      comparedName,
-      hoveredName,
-      onSelect,
-      enterZone,
-      moveZone,
-      leaveZone,
-    ],
+    [ordered, selectedName, comparedName, onSelect, enterZone, moveZone, leaveZone],
   );
 
   const labels = useMemo(
@@ -362,8 +323,6 @@ export default function ChoroplethMap({
                 stroke: haloFor(p.textColor),
                 strokeWidth: 2,
                 strokeLinejoin: "round",
-                // L'etiquette suit exactement le zoom de sa zone
-                ...liftStyle(p, selectedName === p.name, hoveredName === p.name),
               }}
             >
               <tspan x={p.cx} dy="-0.1em" fontSize={9} fontWeight={600}>
@@ -379,7 +338,7 @@ export default function ChoroplethMap({
         )}
       </g>
     ),
-    [ordered, selectedName, hoveredName, fmtLabel],
+    [ordered, fmtLabel],
   );
 
   return (

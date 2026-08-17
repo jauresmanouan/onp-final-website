@@ -8,7 +8,7 @@ import {
   getIndicatorTab,
   ONP_INDICATORS,
 } from "@/components/dashboard/onp/indicators";
-import { CHIFFRES } from "@/content/site/destinations";
+import { ASSISTANT, CHIFFRES } from "@/content/site/destinations";
 // Les catalogues sont des modules de données : les importer ici met la liste
 // des titres dans le paquet client, quelques kilo-octets pour une recherche
 // qui répond sans aller-retour réseau. Le jour où le contenu viendra d'un
@@ -44,6 +44,7 @@ type Destination = {
 
 const PAGES = [
   { href: "/", libelle: "Accueil" },
+  { href: ASSISTANT.href, libelle: ASSISTANT.appel, detail: ASSISTANT.detail },
   { href: "/office", libelle: "L'Office", detail: "Missions, histoire, organisation" },
   { href: "/actualites", libelle: "Actualités" },
   { href: "/publications", libelle: "Publications" },

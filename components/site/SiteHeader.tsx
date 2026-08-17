@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/accueil/ThemeToggle";
 import { BoutonLien } from "@/components/site/LienNavigation";
 import BarreChargement from "@/components/site/BarreChargement";
 import BoutonPalette from "@/components/site/BoutonPalette";
+import BoutonAssistant from "@/components/site/BoutonAssistant";
 import { IDENTITE } from "@/content/site/institution";
-import { CHIFFRES } from "@/content/site/destinations";
+import { ASSISTANT, CHIFFRES } from "@/content/site/destinations";
+import { animationsReduites, ouvrirVoile } from "@/lib/assistant/ouverture";
 
 const NAV = [
   { href: "/office", label: "L'Office" },
@@ -28,6 +30,7 @@ const NAV = [
  */
 export default function SiteHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const [ouvert, setOuvert] = useState(false);
 
   // Le menu se referme dès que la page a changé. Le faire au clic de chaque
@@ -43,11 +46,11 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 w-full bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 border-b border-border">
       {/* Filet aux couleurs nationales */}
-      <div aria-hidden="true" className="flex h-1">
+      {/* <div aria-hidden="true" className="flex h-1">
         <span className="flex-1 bg-[#FF8200]" />
         <span className="flex-1 bg-white" />
         <span className="flex-1 bg-[#009A44]" />
-      </div>
+      </div> */}
 
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="flex h-20 items-center justify-between gap-6">
@@ -100,6 +103,7 @@ export default function SiteHeader() {
             >
               {CHIFFRES.nom}
             </BoutonLien>
+            <BoutonAssistant className="hidden sm:inline-flex" />
             <BoutonPalette />
             <ThemeToggle />
             <button
@@ -136,6 +140,22 @@ export default function SiteHeader() {
               <BarreChargement />
             </Link>
           ))}
+          {/* Le bouton de la barre s'efface sous 640 px : la conversation
+            * reprend sa place ici, en toutes lettres. */}
+          <Link
+            href={ASSISTANT.href}
+            onClick={async (e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+              if (animationsReduites()) return;
+              e.preventDefault();
+              await ouvrirVoile(e.currentTarget, "var(--chat)");
+              router.push(ASSISTANT.href);
+            }}
+            className="block rounded-md px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-muted"
+          >
+            {ASSISTANT.appel}
+            <BarreChargement />
+          </Link>
           <BoutonLien
             href={CHIFFRES.href}
             variante="primary"
