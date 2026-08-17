@@ -202,7 +202,7 @@ function Accueil({ onChoisir }: { onChoisir: (q: string) => void }) {
       <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
         Posez votre question en français. Les réponses sont construites à partir
         des indicateurs publiés par l&apos;Office, de ses rapports et de ses
-        notes de politique — chaque chiffre avancé est accompagné de sa source.
+        notes de politique, chaque chiffre avancé est accompagné de sa source.
       </p>
 
       <ul className="mt-8 grid gap-3 sm:grid-cols-2">

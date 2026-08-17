@@ -87,7 +87,7 @@ export default function CadreConversation({
             className="h-7 w-auto shrink-0 object-contain"
           />
           <span className="truncate font-display text-sm font-semibold tracking-tight">
-            ONP-AI Chat
+            ONP - AI Chat
           </span>
         </Link>
 
