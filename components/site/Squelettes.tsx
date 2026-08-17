@@ -85,18 +85,26 @@ export function SqueletteTexte({ lignes = 4 }: { lignes?: number }) {
   );
 }
 
-/** Rangée de mesures chiffrées, celle de l'ouverture. */
+/**
+ * Rangée de mesures chiffrées, celle de l'ouverture.
+ *
+ * Les hauteurs suivent celles du contenu réel, ligne par ligne : le grand
+ * chiffre et son unité, la précision en `text-lg`, puis les quatre mesures
+ * (`text-3xl lg:text-4xl`, intitulé en `text-sm`, précision en `text-xs`).
+ * Une ligne de squelette plus courte que son texte fait remonter tout ce qui
+ * suit à l'arrivée des données, et l'ouverture entière semble sursauter.
+ */
 export function SqueletteChiffres() {
   return (
     <div>
       <Skeleton className="h-[clamp(4.5rem,15vw,11rem)] w-80 max-w-full bg-white/20" />
-      <Skeleton className="mt-4 h-5 w-96 max-w-full bg-white/10" />
-      <div className="mt-14 grid grid-cols-2 gap-y-8 border-t border-white/15 pt-8 lg:grid-cols-4">
+      <Skeleton className="mt-4 h-7 w-96 max-w-full bg-white/10" />
+      <div className="mt-14 grid grid-cols-2 gap-y-8 border-t border-white/15 pt-8 lg:grid-cols-4 lg:divide-x lg:divide-white/15">
         {Array.from({ length: 4 }, (_, i) => (
           <div key={i} className={i > 0 ? "lg:pl-8" : "lg:pr-8"}>
-            <Skeleton className="h-9 w-24 bg-white/20" />
-            <Skeleton className="mt-2 h-3.5 w-20 bg-white/10" />
-            <Skeleton className="mt-1.5 h-3 w-28 bg-white/10" />
+            <Skeleton className="h-9 w-24 bg-white/20 lg:h-10" />
+            <Skeleton className="mt-1.5 h-5 w-20 bg-white/10" />
+            <Skeleton className="mt-0.5 h-4 w-28 bg-white/10" />
           </div>
         ))}
       </div>

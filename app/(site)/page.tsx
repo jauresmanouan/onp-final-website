@@ -179,10 +179,14 @@ function AttenteOuverture() {
           Chargement des chiffres clés
         </span>
         <div aria-hidden="true">
-          <Skeleton className="mt-4 h-8 w-2/3 max-w-xl bg-white/15" />
+          {/* Le gabarit reprend la section entière, appel à l'action compris :
+            * sans le bouton, la moitié basse de l'ouverture remontait de près
+            * de cent pixels au moment où les chiffres arrivaient. */}
+          <Skeleton className="mt-4 h-8 w-2/3 max-w-xl bg-white/15 sm:h-9" />
           <div className="mt-12 lg:mt-16">
             <SqueletteChiffres />
           </div>
+          <Skeleton className="mt-12 h-12 w-60 max-w-full rounded-lg bg-white/20" />
         </div>
       </div>
     </CadreOuverture>
