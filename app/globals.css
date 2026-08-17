@@ -379,3 +379,84 @@
 .recharts-legend-item-text {
   color: var(--chart-text) !important;
 }
+
+/* ── Entrées à l'arrivée ─────────────────────────────────────────────
+ * Trois mouvements, et pas un de plus. Chacun accompagne une lecture au lieu
+ * de la décorer : la cascade des districts dit qu'une carte se construit, le
+ * point qui glisse sur son rail dit qu'il se compare, la courbe qui se trace
+ * dit qu'elle avance dans le temps.
+ *
+ * Tous s'effacent sous « réduire les animations », en fin de bloc : le
+ * contenu doit être là, immobile, pour qui l'a demandé.
+ */
+
+/* En-tête de rubrique : surtitre, titre et chapeau montent l'un après
+ * l'autre. Quatorze pixels, comme les apparitions au défilement — le site
+ * n'a qu'une amplitude de mouvement. */
+.entree-titre > * {
+  animation: entree-montee 620ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.entree-titre > *:nth-child(2) {
+  animation-delay: 70ms;
+}
+.entree-titre > *:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+@keyframes entree-montee {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* Les districts se posent l'un après l'autre. L'opacité seule : la
+ * transformation est déjà prise par le relief au survol et à la sélection,
+ * et deux animations sur la même propriété se contredisent. */
+.zone-carte {
+  animation: zone-pose 420ms ease-out backwards;
+}
+
+@keyframes zone-pose {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Le point d'un rail vient prendre sa place, depuis la gauche. */
+.point-rail {
+  animation: point-arrive 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes point-arrive {
+  from {
+    opacity: 0;
+    transform: translate(-14px, -50%) scale(0.6);
+  }
+}
+
+/* La courbe se trace de la première année à la dernière. `pathLength=1`
+ * normalise la longueur : le tracé dure autant pour toutes les séries,
+ * quelle que soit leur amplitude. */
+.courbe-tracee {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: courbe-trace 900ms cubic-bezier(0.33, 0, 0.15, 1) forwards;
+}
+
+@keyframes courbe-trace {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entree-titre > *,
+  .zone-carte,
+  .point-rail,
+  .courbe-tracee {
+    animation: none;
+    transform: none;
+    stroke-dashoffset: 0;
+  }
+}

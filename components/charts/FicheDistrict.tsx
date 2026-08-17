@@ -187,11 +187,12 @@ function Contenu({
 
           <Titre>Indices 2021</Titre>
           <div className="space-y-3.5">
-            {indices.map((score) => (
+            {indices.map((score, i) => (
               <Rail
                 key={score.key}
                 score={score}
                 enRegard={enRegard.get(score.key) ?? null}
+                rang={i}
               />
             ))}
           </div>
@@ -282,10 +283,13 @@ function Titre({ children }: { children: React.ReactNode }) {
 function Rail({
   score,
   enRegard,
+  rang: ordre,
 }: {
   score: ScoreStat;
   /** Valeur du district mis en regard sur le même indice, ou null. */
   enRegard: number | null;
+  /** Position dans la liste, pour échelonner l'arrivée des points. */
+  rang: number;
 }) {
   const position = borne(score.value * 100);
   const moyenne = borne(score.average * 100);
@@ -325,9 +329,10 @@ function Rail({
         )}
         <span
           aria-hidden="true"
-          className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="point-rail absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
             left: `${position}%`,
+            animationDelay: `${ordre * 60}ms`,
             backgroundColor: auDessus
               ? CHART_COLORS.positive
               : CHART_COLORS.accent,
@@ -522,6 +527,8 @@ function Courbe({
         />
       )}
       <polyline
+        className="courbe-tracee"
+        pathLength={1}
         points={points}
         fill="none"
         stroke={monte ? CHART_COLORS.positive : CHART_COLORS.accent}

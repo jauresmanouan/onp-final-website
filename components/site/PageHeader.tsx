@@ -53,6 +53,11 @@ export default function PageHeader({
           </ol>
         </nav>
 
+        {/* Surtitre, titre et chapeau montent l'un après l'autre : le
+          * regard suit l'ordre de lecture au lieu de tout recevoir d'un
+          * bloc. Le fil d'Ariane, lui, reste immobile — c'est un repère, pas
+          * une entrée en matière. */}
+        <div className="entree-titre">
         <p className="mt-8 text-xs font-semibold uppercase tracking-[0.14em] text-accent">
           {surtitre}
         </p>
@@ -70,6 +75,7 @@ export default function PageHeader({
             {chapeau}
           </p>
         )}
+        </div>
       </div>
     </section>
   );

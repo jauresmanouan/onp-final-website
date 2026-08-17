@@ -4,6 +4,10 @@ import path from "node:path";
 /**
  * Chiffres clés de la page d'accueil, lus au rendu depuis les CSV publiés.
  *
+ * Ils portent tous sur la population. Le nombre de districts couverts et le
+ * nombre de missions y figuraient aussi : ils décrivaient l'outil et
+ * l'institution, pas le pays, et n'apprenaient rien à qui ouvre la page.
+ *
  * Ils viennent des mêmes fichiers que le tableau de bord plutôt que d'une
  * liste de constantes : une correction de données se répercute d'elle-même
  * sur la vitrine, et l'accueil ne peut pas annoncer un chiffre que la
@@ -49,10 +53,11 @@ export async function getChiffresCles(): Promise<{
   principal: ChiffrePrincipal | null;
   secondaires: ChiffreCle[];
 }> {
-  const [population, esperance, districts] = await Promise.all([
+  const [population, esperance, fecondite, ages] = await Promise.all([
     readCsv("population_totale_et_croissance.csv"),
     readCsv("sante_esperance_vie_naissance.csv"),
-    readCsv("districts_snapshot_2021.csv"),
+    readCsv("sante_indice_synthetique_fecondite.csv"),
+    readCsv("population_indice_structure_age.csv"),
   ]);
 
   const chiffres: ChiffreCle[] = [];
@@ -80,12 +85,26 @@ export async function getChiffresCles(): Promise<{
     });
   }
 
-  const nb = districts.filter((r) => r.district && r.district !== "National").length;
-  if (nb > 0) {
+  // Deux mesures qui portent le mandat de l'Office : ce que la population
+  // fait — sa fécondité — et ce qu'elle est — sa jeunesse. Ce sont les deux
+  // termes du dividende démographique, que le tableau de bord détaille.
+  const isf = num(fecondite.find((r) => r.indicateur === "ISF")?.["2021"]);
+  if (isf != null) {
     chiffres.push({
-      valeur: String(nb),
-      intitule: "Districts couverts",
-      precision: "Indicateurs disponibles pour chacun",
+      valeur: isf.toFixed(1).replace(".", ","),
+      intitule: "Enfants par femme",
+      precision: "Indice synthétique de fécondité, 2021",
+    });
+  }
+
+  // La dernière ligne du fichier est le recensement le plus récent.
+  const dernierRecensement = ages[ages.length - 1];
+  const jeunes = num(dernierRecensement?.pct_moins_15_ans);
+  if (jeunes != null) {
+    chiffres.push({
+      valeur: `${jeunes.toFixed(1).replace(".", ",")} %`,
+      intitule: "Moins de 15 ans",
+      precision: `Part de la population, ${dernierRecensement.recensement}`,
     });
   }
 

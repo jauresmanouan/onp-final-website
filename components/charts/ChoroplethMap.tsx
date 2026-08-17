@@ -291,12 +291,16 @@ export default function ChoroplethMap({
   const shapes = useMemo(
     () => (
       <g>
-        {ordered.map((p) => {
+        {ordered.map((p, i) => {
           const isSelected = selectedName === p.name;
           const isCompared = comparedName === p.name;
           return (
             <path
               key={p.key}
+              // Les zones se posent l'une après l'autre, dans l'ordre du
+              // fichier : quatorze fois trente millisecondes, la carte est
+              // construite en moins d'une demi-seconde.
+              className="zone-carte"
               d={p.d}
               fill={p.fill}
               // La zone mise en regard n'est pas soulevée : elle est cernée.
@@ -311,6 +315,7 @@ export default function ChoroplethMap({
               aria-pressed={onSelect ? isSelected : undefined}
               style={{
                 ...liftStyle(p, isSelected, hoveredName === p.name),
+                animationDelay: `${i * 30}ms`,
                 cursor: "pointer",
                 outline: "none",
               }}

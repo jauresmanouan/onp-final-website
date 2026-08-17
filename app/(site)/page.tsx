@@ -113,19 +113,8 @@ async function Ouverture() {
     getChiffresCles(),
     getInstitution(),
   ]);
-  const { identite, missions } = institution;
-  const { principal } = chiffres;
-
-  // Le nombre de missions complète les mesures tirées des CSV : il dit ce que
-  // l'Office fait, là où les autres chiffres disent ce qu'il observe.
-  const secondaires = [
-    ...chiffres.secondaires,
-    {
-      valeur: String(missions.length),
-      intitule: "Missions",
-      precision: "Confiées par le décret de création",
-    },
-  ];
+  const { identite } = institution;
+  const { principal, secondaires } = chiffres;
 
   return (
     <CadreOuverture>
@@ -151,7 +140,9 @@ async function Ouverture() {
         </div>
       )}
 
-      {/* Les autres mesures, séparées par des filets */}
+      {/* Les autres mesures, séparées par des filets. Elles disent toutes
+        * quelque chose du pays : une mesure qui décrit l'institution ou
+        * l'outil n'a rien à faire sous le chiffre du recensement. */}
       <dl className="mt-14 grid grid-cols-2 gap-y-8 border-t border-white/15 pt-8 lg:grid-cols-4 lg:divide-x lg:divide-white/15">
         {secondaires.map((c, i) => (
           <div key={c.intitule} className={i > 0 ? "lg:pl-8" : "lg:pr-8"}>
