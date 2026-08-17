@@ -10,7 +10,7 @@ import {
   getPartenaires,
   getPublicationsParCategorie,
 } from "@/lib/content";
-import { Download } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import BandeauAnnonce from "@/components/site/BandeauAnnonce";
 import ChiffreAnime from "@/components/site/ChiffreAnime";
 import NouvelleFenetre from "@/components/site/NouvelleFenetre";
@@ -426,8 +426,9 @@ async function Publications() {
             <li key={pub.slug} data-apparition data-apparition-retard={i * 90}>
               <a
                 href={pub.fichier}
-                download
-                className="group flex gap-4 rounded-xl border border-border bg-card p-4 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="group flex h-full gap-4 rounded-xl border border-border bg-card p-4 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="relative aspect-[1/1.414] w-16 shrink-0 overflow-hidden rounded-md bg-muted">
                   <Image
@@ -445,9 +446,13 @@ async function Publications() {
                   <h3 className="mt-1 text-sm font-semibold leading-snug line-clamp-3 group-hover:text-primary transition-colors">
                     {pub.titre}
                   </h3>
+                  {/* Le document s'ouvre pour être lu : c'est depuis la
+                    * rubrique qu'on l'enregistre, une fois qu'on sait ce
+                    * qu'il contient. */}
                   <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-                    <Download className="size-3" aria-hidden="true" />
-                    PDF · {poidsPdf(pub.poidsKo)}
+                    <BookOpen className="size-3" aria-hidden="true" />
+                    Consulter · PDF {poidsPdf(pub.poidsKo)}
+                    <NouvelleFenetre />
                   </p>
                 </div>
               </a>
