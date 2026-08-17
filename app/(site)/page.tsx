@@ -12,6 +12,7 @@ import {
 import BandeauAnnonce from "@/components/site/BandeauAnnonce";
 import ChiffreAnime from "@/components/site/ChiffreAnime";
 import NouvelleFenetre from "@/components/site/NouvelleFenetre";
+import DateActualite from "@/components/site/DateActualite";
 import { BoutonLien, LienFleche } from "@/components/site/LienNavigation";
 import { CHIFFRES } from "@/content/site/destinations";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -122,7 +123,7 @@ async function Ouverture() {
 
   return (
     <CadreOuverture>
-      <h1 className="mt-4 font-display text-2xl sm:text-3xl font-bold tracking-tight">
+      <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">
         {identite.baseline}
       </h1>
 
@@ -159,14 +160,13 @@ async function Ouverture() {
         ))}
       </dl>
 
-      <div className="mt-12 flex flex-col gap-3 sm:flex-row">
-        <BoutonLien
-          href={CHIFFRES.href}
-          libelleChargement="Chargement des données…"
-        >
-          {CHIFFRES.appel}
-        </BoutonLien>
-      </div>
+      <BoutonLien
+        href={CHIFFRES.href}
+        libelleChargement="Chargement des données…"
+        className="mt-12"
+      >
+        {CHIFFRES.appel}
+      </BoutonLien>
     </CadreOuverture>
   );
 }
@@ -182,7 +182,7 @@ function AttenteOuverture() {
           {/* Le gabarit reprend la section entière, appel à l'action compris :
             * sans le bouton, la moitié basse de l'ouverture remontait de près
             * de cent pixels au moment où les chiffres arrivaient. */}
-          <Skeleton className="mt-4 h-8 w-2/3 max-w-xl bg-white/15 sm:h-9" />
+          <Skeleton className="h-8 w-2/3 max-w-xl bg-white/15 sm:h-9" />
           <div className="mt-12 lg:mt-16">
             <SqueletteChiffres />
           </div>
@@ -324,14 +324,10 @@ async function Actualites() {
                   />
                 </div>
                 <div className="p-5">
-                  {a.date && (
-                    <time
-                      dateTime={a.date}
-                      className="text-xs font-medium text-muted-foreground"
-                    >
-                      {formatDate(a.date)}
-                    </time>
-                  )}
+                  {/* Le composant partagé, qui affiche aussi l'organe de
+                    * presse : les cartes de l'accueil taisaient la source que
+                    * les mêmes cartes, dans la rubrique, donnent. */}
+                  <DateActualite date={a.date} source={a.source} />
                   <h3 className="mt-2 font-semibold leading-snug line-clamp-3 group-hover:text-primary transition-colors">
                     {a.titre}
                   </h3>
@@ -494,14 +490,4 @@ function AttentePartenaires() {
       </div>
     </section>
   );
-}
-
-const MOIS = [
-  "janvier", "février", "mars", "avril", "mai", "juin",
-  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
-];
-
-function formatDate(iso: string): string {
-  const [a, m, j] = iso.split("-").map(Number);
-  return `${j} ${MOIS[m - 1]} ${a}`;
 }
