@@ -9,6 +9,12 @@ import {
   ONP_INDICATORS,
 } from "@/components/dashboard/onp/indicators";
 import { CHIFFRES } from "@/content/site/destinations";
+// Les catalogues sont des modules de données : les importer ici met la liste
+// des titres dans le paquet client, quelques kilo-octets pour une recherche
+// qui répond sans aller-retour réseau. Le jour où le contenu viendra d'un
+// CMS, c'est cette importation qui deviendra un appel.
+import { ACTUALITES_RECENTES } from "@/content/site/actualites";
+import { PUBLICATIONS } from "@/content/site/publications";
 
 /**
  * Palette de commandes, appelée au clavier depuis n'importe quelle page.
@@ -26,7 +32,12 @@ type Destination = {
   id: string;
   libelle: string;
   detail?: string;
-  groupe: "Indicateurs" | typeof CHIFFRES.nom | "Pages";
+  groupe:
+    | "Indicateurs"
+    | typeof CHIFFRES.nom
+    | "Pages"
+    | "Actualités"
+    | "Publications";
   /** Ce que fait la sélection : naviguer, et parfois ouvrir une fiche. */
   aller: () => void;
 };
@@ -139,6 +150,36 @@ export default function PaletteCommandes() {
     const filtre = (texte: string) =>
       !q || sansAccent(texte).includes(sansAccent(q));
 
+    // Les articles et les documents ne se proposent qu'à la demande : sans
+    // requête, la palette doit ouvrir sur des repères, pas sur un catalogue.
+    const articles = !q
+      ? []
+      : ACTUALITES_RECENTES.filter(
+          (a) => filtre(a.titre) || filtre(a.chapeau),
+        )
+          .slice(0, 4)
+          .map<Destination>((a) => ({
+            id: `actu-${a.slug}`,
+            libelle: a.titre,
+            detail: a.date ?? undefined,
+            groupe: "Actualités",
+            aller: () => router.push(`/actualites/${a.slug}`),
+          }));
+
+    const documents = !q
+      ? []
+      : PUBLICATIONS.filter((p) => filtre(p.titre) || filtre(p.resume))
+          .slice(0, 4)
+          .map<Destination>((p) => ({
+            id: `pub-${p.slug}`,
+            libelle: p.titre,
+            detail: "PDF",
+            groupe: "Publications",
+            // Le document s'ouvre en lecture, comme partout ailleurs sur le
+            // site : on ne télécharge pas ce qu'on n'a pas encore vu.
+            aller: () => window.open(p.fichier, "_blank", "noopener"),
+          }));
+
     const onglets = ONGLETS.filter((o) => filtre(o.libelle)).map<Destination>(
       (o) => ({
         id: `tab-${o.hash}`,
@@ -159,7 +200,7 @@ export default function PaletteCommandes() {
       }),
     );
 
-    return [...indicateurs, ...onglets, ...pages];
+    return [...indicateurs, ...onglets, ...pages, ...articles, ...documents];
   }, [requete, router, ouvrirIndicateur]);
 
   useEffect(() => setActif(0), [requete]);
@@ -215,7 +256,7 @@ export default function PaletteCommandes() {
             autoFocus
             value={requete}
             onChange={(e) => setRequete(e.target.value)}
-            placeholder="Rechercher un indicateur, une rubrique…"
+            placeholder="Rechercher un indicateur, un article, un document…"
             aria-label="Rechercher"
             className="h-12 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
@@ -247,9 +288,11 @@ export default function PaletteCommandes() {
                     i === actif ? "bg-muted" : ""
                   }`}
                 >
-                  <span className="truncate text-sm">{d.libelle}</span>
+                  <span className="min-w-0 flex-1 truncate text-sm">
+                    {d.libelle}
+                  </span>
                   {d.detail && (
-                    <span className="ml-auto truncate text-[11px] text-muted-foreground">
+                    <span className="shrink-0 text-[11px] text-muted-foreground">
                       {d.detail}
                     </span>
                   )}
