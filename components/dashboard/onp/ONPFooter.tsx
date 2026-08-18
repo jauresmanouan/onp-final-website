@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, MapPin, Phone } from "lucide-react";
+import Signature from "@/components/site/Signature";
 import { CHIFFRES } from "@/content/site/destinations";
 
 const NAVIGATION = [
@@ -96,11 +97,12 @@ export default function ONPFooter() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-border">
+        <div className="mt-10 flex flex-col gap-1.5 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} Office National de la Population · Tous
             droits réservés.
           </p>
+          <Signature />
         </div>
       </div>
     </footer>

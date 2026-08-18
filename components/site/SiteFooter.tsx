@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getInstitution, getLiensInstitutionnels } from "@/lib/content";
 import NouvelleFenetre from "@/components/site/NouvelleFenetre";
+import Signature from "@/components/site/Signature";
 import { CHIFFRES } from "@/content/site/destinations";
 
 const RUBRIQUES = [
@@ -88,9 +89,13 @@ export default async function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} {identite.nom} · {contact.ville}
-          </p>
+          <div className="flex flex-col gap-1.5">
+            <p className="text-xs text-muted-foreground">
+              © {new Date().getFullYear()} {identite.nom} · {contact.ville}
+            </p>
+          </div>
+          <Signature />
+
           <div className="flex items-center gap-4">
             <a
               href={contact.facebook}
