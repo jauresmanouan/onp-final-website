@@ -453,6 +453,46 @@
   }
 }
 
+/* Le passage d'un thème à l'autre se fond, au lieu de claquer.
+ *
+ * La bascule change une classe sur `html`, et toutes les couleurs de la page
+ * en découlent : sans transition, l'écran entier permute d'une image à la
+ * suivante, ce qui est brutal de nuit comme de jour.
+ *
+ * La règle est posée sur tout l'arbre, ce qui ne se fait qu'à une condition :
+ * qu'elle ne dure pas. La classe est retirée dès le fondu terminé, si bien
+ * qu'aucun élément ne traîne une transition permanente sur ses couleurs — ce
+ * qui rendrait poisseux les survols, les onglets et les graphiques. Les
+ * propriétés listées sont uniquement celles qui changent avec le thème :
+ * transformations et opacités gardent leurs propres réglages.
+ *
+ * L'icône du bouton, elle, tourne : c'est le seul endroit où l'on voit
+ * l'ordre donné, et un quart de tour suffit à confirmer le clic. */
+.fondu-theme,
+.fondu-theme *,
+.fondu-theme *::before,
+.fondu-theme *::after {
+  transition:
+    background-color 320ms ease,
+    border-color 320ms ease,
+    color 320ms ease,
+    fill 320ms ease,
+    stroke 320ms ease,
+    box-shadow 320ms ease !important;
+  transition-delay: 0ms !important;
+}
+
+.bascule-theme {
+  animation: bascule-theme 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes bascule-theme {
+  from {
+    transform: rotate(-90deg) scale(0.6);
+    opacity: 0;
+  }
+}
+
 /* Le point d'un rail vient prendre sa place, depuis la gauche. */
 .point-rail {
   animation: point-arrive 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
@@ -483,6 +523,7 @@
 @media (prefers-reduced-motion: reduce) {
   .entree-titre > *,
   .entree-chat,
+  .bascule-theme,
   .point-rail,
   .courbe-tracee {
     animation: none;
