@@ -12,7 +12,11 @@ import BoutonPalette from "@/components/site/BoutonPalette";
 import BoutonAssistant from "@/components/site/BoutonAssistant";
 import { IDENTITE } from "@/content/site/institution";
 import { ASSISTANT, CHIFFRES } from "@/content/site/destinations";
-import { animationsReduites, ouvrirVoile } from "@/lib/assistant/ouverture";
+import {
+  animationsReduites,
+  ouvrirVoile,
+  retenirDepart,
+} from "@/lib/assistant/ouverture";
 
 const NAV = [
   { href: "/office", label: "L'Office" },
@@ -146,6 +150,7 @@ export default function SiteHeader() {
             href={ASSISTANT.href}
             onClick={async (e) => {
               if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+              retenirDepart(pathname);
               if (animationsReduites()) return;
               e.preventDefault();
               await ouvrirVoile(e.currentTarget, "var(--chat)");

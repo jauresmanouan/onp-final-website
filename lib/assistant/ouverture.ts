@@ -24,38 +24,57 @@ const OUVERTURE_MS = 520;
 const EFFACEMENT_MS = 380;
 
 /**
- * Sécurité : si la page d'arrivée n'efface pas le disque elle-même — retour
- * arrière, route inattendue, erreur — il s'en va tout seul. Un voile resté
- * en place rendrait le site inutilisable.
+ * Sécurité : si la page d'arrivée n'efface pas le disque elle-même — route
+ * inattendue, erreur de rendu — il s'en va tout seul.
+ *
+ * Le délai est large à dessein. À 2,2 s il arbitrait les navigations lentes :
+ * la route n'avait pas fini de répondre, le secours effaçait le disque et
+ * découvrait la page de départ, puis la conversation arrivait d'un bloc. Ce
+ * minuteur n'est pas là pour rattraper une lenteur, seulement pour qu'un
+ * disque orphelin ne reste pas à l'écran.
  */
-const SECOURS_MS = 2200;
+const SECOURS_MS = 8000;
 
-/** D'où l'on venait, pour savoir de quelle couleur repartir. */
+/** Le minuteur du disque en cours, pour l'annuler quand il s'en va. */
+let secours: number | null = null;
+
+/** D'où l'on venait, pour savoir comment et de quelle couleur repartir. */
 const CLE_DEPART = "onp:depart-conversation";
 
 export function retenirDepart(chemin: string) {
   try {
     sessionStorage.setItem(CLE_DEPART, chemin);
   } catch {
-    // Session indisponible : le retour se fera sur la couleur par défaut.
+    // Session indisponible : le retour se fera sur les valeurs par défaut.
   }
 }
 
 /**
- * La couleur du disque au retour.
+ * L'adresse quittée, lue une seule fois.
+ *
+ * Elle est consommée, et non simplement lue : une clé qui survit ferait
+ * repartir vers le départ de la fois précédente. Un `null` signifie qu'on
+ * n'est pas venu par le bouton — palette, lien collé, rechargement — et qu'il
+ * n'y a donc nulle part où revenir.
+ */
+export function consommerDepart(): string | null {
+  try {
+    const depart = sessionStorage.getItem(CLE_DEPART);
+    sessionStorage.removeItem(CLE_DEPART);
+    return depart;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * La couleur du disque pour une adresse donnée.
  *
  * Le tableau de bord est vert sur presque toute sa hauteur : un disque blanc
  * qui s'y efface fait un éclair, exactement ce qu'on cherchait à supprimer.
- * On reprend donc la teinte de la page vers laquelle on revient.
  */
-export function couleurRetour(): string {
-  try {
-    const depart = sessionStorage.getItem(CLE_DEPART);
-    if (depart?.startsWith("/dashboard")) return "var(--panel)";
-  } catch {
-    /* rien : la couleur par défaut convient */
-  }
-  return "var(--background)";
+export function couleurPour(chemin: string | null): string {
+  return chemin?.startsWith("/dashboard") ? "var(--panel)" : "var(--background)";
 }
 
 export function animationsReduites(): boolean {
@@ -103,13 +122,21 @@ export function ouvrirVoile(
     background: couleur,
     // Au-dessus de tout, en-têtes collants compris.
     zIndex: "100",
-    pointerEvents: "none",
+    // Le disque arrête les clics. Il les laissait passer, si bien qu'un lien
+    // resté visible sous un écran couvert pouvait lancer une seconde
+    // navigation par-dessus la première. Sa suppression étant garantie des
+    // deux côtés, plus le minuteur de secours, il n'y a plus de risque de
+    // bloquer la page.
+    pointerEvents: "auto",
     transform: "translate(-50%, -50%) scale(0)",
     willChange: "transform",
   } satisfies Partial<CSSStyleDeclaration>);
   document.body.appendChild(voile);
 
-  window.setTimeout(() => retirerVoile(), SECOURS_MS);
+  // Le minuteur précédent est remplacé, jamais laissé courir : sinon celui de
+  // la transition d'avant venait effacer le disque de celle-ci en plein vol.
+  if (secours !== null) window.clearTimeout(secours);
+  secours = window.setTimeout(() => retirerVoile(), SECOURS_MS);
 
   const croissance = voile.animate(
     [
@@ -134,6 +161,11 @@ export function retirerVoile(immediat = false) {
   if (typeof document === "undefined") return;
   const voile = document.getElementById(ID_VOILE);
   if (!voile) return;
+
+  if (secours !== null) {
+    window.clearTimeout(secours);
+    secours = null;
+  }
 
   if (immediat || animationsReduites()) {
     voile.remove();

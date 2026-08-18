@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { MessageCircle } from "lucide-react";
@@ -17,11 +18,15 @@ import {
  * qu'il faut savoir nommer, celle-ci à une question qu'on pose comme elle
  * vient.
  *
- * Le clic ouvre le disque avant de naviguer. C'est un `Link` malgré tout, et
- * non un bouton : il garde le préchargement de la route, le clic milieu, le
+ * Le clic ouvre le disque, puis navigue. L'ordre compte : la route est donc
+ * préchargée dès que le bouton est en place, sans quoi la navigation partait
+ * une fois le disque ouvert et l'écran restait couvert le temps de la
+ * réponse — assez longtemps, sur une route froide, pour que le minuteur de
+ * secours découvre la page de départ avant l'arrivée de la conversation.
+ *
+ * C'est un `Link` malgré tout, et non un bouton : il garde le clic milieu, le
  * « ouvrir dans un nouvel onglet » et l'adresse en bas de la fenêtre. Le geste
- * n'est intercepté que pour un clic gauche ordinaire — un clic modifié part
- * tel quel, sans animation, ce qui est le comportement attendu.
+ * n'est intercepté que pour un clic gauche ordinaire.
  */
 export default function BoutonAssistant({
   className = "",
@@ -31,13 +36,17 @@ export default function BoutonAssistant({
   const router = useRouter();
   const pathname = usePathname();
 
+  useEffect(() => {
+    router.prefetch(ASSISTANT.href);
+  }, [router]);
+
   return (
     <Link
       href={ASSISTANT.href}
       onClick={async (e) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
-        // L'adresse quittée est retenue ici : c'est elle qui donnera sa
-        // couleur au disque du retour.
+        // L'adresse quittée est retenue ici : c'est elle qui dira, au retour,
+        // où revenir et de quelle couleur.
         retenirDepart(pathname);
         if (animationsReduites()) return;
         e.preventDefault();

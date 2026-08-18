@@ -8,7 +8,8 @@ import { X } from "lucide-react";
 import ThemeToggle from "@/components/accueil/ThemeToggle";
 import {
   animationsReduites,
-  couleurRetour,
+  consommerDepart,
+  couleurPour,
   ouvrirVoile,
   retirerVoile,
 } from "@/lib/assistant/ouverture";
@@ -40,11 +41,23 @@ export default function CadreConversation({
     retirerVoile();
   }, []);
 
+  // Verrou de sortie. Deux Échap rapprochés, ou un double-clic sur la croix,
+  // lançaient deux disques et deux `router.back()` : on remontait deux pages
+  // en arrière au lieu d'une.
+  const sortEnCours = useRef(false);
+
   const fermer = useCallback(async () => {
+    if (sortEnCours.current) return;
+    sortEnCours.current = true;
+
+    // L'adresse quittée, lue une seule fois. `null` veut dire qu'on n'est pas
+    // venu par le bouton : rien ne garantit alors que l'entrée précédente de
+    // l'historique appartienne au site, et un retour en arrière ferait sortir.
+    const depart = consommerDepart();
     const retour = () => {
       // Revenir d'où l'on vient plutôt que d'imposer l'accueil : la question
       // est souvent posée depuis le tableau de bord, au milieu d'une lecture.
-      if (window.history.length > 1) router.back();
+      if (depart) router.back();
       else router.push("/");
     };
 
@@ -56,8 +69,8 @@ export default function CadreConversation({
     // Le disque prend la couleur de la page vers laquelle on revient, puis
     // c'est elle qui l'efface en arrivant — `RetraitVoile`, monté dans les
     // deux ossatures. Sans lui, le disque restait jusqu'à son minuteur de
-    // secours et l'on regardait un écran uni pendant une seconde et demie.
-    await ouvrirVoile(croixRef.current, couleurRetour());
+    // secours et l'on regardait un écran uni.
+    await ouvrirVoile(croixRef.current, couleurPour(depart));
     retour();
   }, [router]);
 
